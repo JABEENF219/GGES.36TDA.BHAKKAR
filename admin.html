@@ -27,7 +27,7 @@
     <form id="loginForm" class="stack mt-3" novalidate>
       <div class="field">
         <label for="u" data-i18n="admin.username"></label>
-        <input class="input" id="u" autocomplete="username" required placeholder="admin">
+        <input class="input" id="u" type="email" autocomplete="email" required placeholder="you@example.com">
       </div>
       <div class="field">
         <label for="p" data-i18n="admin.password"></label>
@@ -199,7 +199,7 @@
               <span class="brand__logo" id="logoPreview" style="width:74px;height:74px;font-size:1.5rem">G</span>
               <div>
                 <b class="small">School logo</b>
-                <p class="tiny muted">PNG or JPG, under 900 KB.</p>
+                <p class="tiny muted">PNG or JPG, up to 15 MB. Pictures are compressed and stored in the cloud.</p>
                 <input type="file" id="logoFile" accept="image/*" class="mt-1">
               </div>
             </div>
@@ -221,7 +221,6 @@
             <div class="panel__head"><h3 data-i18n="admin.authTitle"></h3></div>
             <p class="small muted mb-2" data-i18n="admin.authText"></p>
             <div class="form-grid">
-              <div class="field"><label for="nUser" data-i18n="admin.newUsername"></label><input class="input" id="nUser"></div>
               <div class="field"><label for="nPass" data-i18n="admin.newPassword"></label><input class="input" id="nPass" type="password"></div>
               <div class="field"><label for="nPass2" data-i18n="admin.confirmPassword"></label><input class="input" id="nPass2" type="password"></div>
             </div>
@@ -285,6 +284,7 @@
   </div>
 </div>
 
+<script src="assets/js/vendor/supabase.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/app.js"></script>
@@ -415,18 +415,23 @@
 
   $('#loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    if (Store.login($('#u').value, $('#p').value)) {
+    var btn = $('#loginForm [type="submit"]');
+    var email = $('#u').value.trim(), pass = $('#p').value;
+    if (!email || !pass) { App.toast(I18N.t('common.requiredField'), 'error'); return; }
+    btn.disabled = true;
+    Store.login(email, pass).then(function (ok) {
+      btn.disabled = false;
       $('#p').value = '';
-      showApp();
-      App.toast(I18N.t('admin.welcome'), 'success');
-    } else {
-      App.toast(I18N.t('admin.invalid'), 'error');
-      $('#p').value = '';
-      $('#p').focus();
-    }
+      if (ok) {
+        App.toast(I18N.t('admin.welcome'), 'success');
+      } else {
+        App.toast(I18N.t('admin.invalid'), 'error');
+        $('#p').focus();
+      }
+    });
   });
 
-  $('#logoutBtn').addEventListener('click', function () { Store.logout(); showLogin(); });
+  $('#logoutBtn').addEventListener('click', function () { Store.logout(); });
 
   /* ------------------------------------------------------- navigation */
   var VIEWS = [
@@ -580,13 +585,13 @@
         var key = inp.getAttribute('data-imginput');
         var file = inp.files && inp.files[0];
         if (!file) return;
-        Store.readFileAsDataURL(file, 900).then(function (dataUrl) {
+        Store.readFileAsDataURL(file, 15000).then(function (dataUrl) {
           var hidden = $('#fmFields [data-key="' + key + '"]');
           if (hidden) hidden.value = dataUrl;
           var prev = $('#fmFields [data-imgprev]');
           if (prev) prev.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
           App.toast(I18N.t('common.saved'), 'success');
-        }).catch(function () { App.toast('Image too large (max 900 KB).', 'error'); });
+        }).catch(function () { App.toast('Image too large (max 15 MB).', 'error'); });
       });
     });
     $$('#fmFields [data-imgclear]').forEach(function (b) {
@@ -808,7 +813,7 @@
     var baseTitle = $('#upTitle').value.trim();
     var done = 0, failed = 0;
     arr.forEach(function (f, i) {
-      Store.readFileAsDataURL(f, 900).then(function (dataUrl) {
+      Store.readFileAsDataURL(f, 15000).then(function (dataUrl) {
         var title = baseTitle ? (arr.length > 1 ? baseTitle + ' ' + (i + 1) : baseTitle) : f.name.replace(/\.[^.]+$/, '');
         Store.add('gallery', { title: title, titleUr: '', category: cat, src: dataUrl, date: Store.todayISO() });
         done++;
@@ -820,7 +825,7 @@
     });
     function finish() {
       if (done) App.toast(done + ' ' + I18N.t('admin.uploaded'), 'success');
-      if (failed) App.toast(failed + ' image(s) skipped — max 900 KB each.', 'error');
+      if (failed) App.toast(failed + ' image(s) skipped — they could not be uploaded.', 'error');
       $('#upTitle').value = '';
       refreshAll();
     }
@@ -875,12 +880,12 @@
 
   $('#logoFile').addEventListener('change', function () {
     var f = this.files[0]; if (!f) return;
-    Store.readFileAsDataURL(f, 900).then(function (d) {
+    Store.readFileAsDataURL(f, 15000).then(function (d) {
       Store.saveSettings({ logoData: d });
       App.toast(I18N.t('common.saved'), 'success');
       paintSettings();
       var sl = $('#sideLogo'); sl.innerHTML = '<img src="' + d + '" alt="">';
-    }).catch(function () { App.toast('Logo too large (max 900 KB).', 'error'); });
+    }).catch(function () { App.toast('Logo could not be uploaded.', 'error'); });
   });
   $('#logoRemove').addEventListener('click', function () {
     Store.saveSettings({ logoData: '' });
@@ -890,11 +895,11 @@
 
   $('#heroFile').addEventListener('change', function () {
     var f = this.files[0]; if (!f) return;
-    Store.readFileAsDataURL(f, 900).then(function (d) {
+    Store.readFileAsDataURL(f, 15000).then(function (d) {
       Store.saveSettings({ heroImage: d });
       App.toast(I18N.t('common.saved'), 'success');
       paintSettings();
-    }).catch(function () { App.toast('Photo too large (max 900 KB).', 'error'); });
+    }).catch(function () { App.toast('Photo could not be uploaded.', 'error'); });
     this.value = '';
   });
   $('#heroRemove').addEventListener('click', function () {
@@ -905,12 +910,20 @@
 
   $('#authForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var u = $('#nUser').value.trim(), p1 = $('#nPass').value, p2 = $('#nPass2').value;
-    if (!u || !p1) { App.toast(I18N.t('common.requiredField'), 'error'); return; }
+    var p1 = $('#nPass').value, p2 = $('#nPass2').value;
+    if (!p1) { App.toast(I18N.t('common.requiredField'), 'error'); return; }
+    if (p1.length < 6) { App.toast('Password must be at least 6 characters.', 'error'); return; }
     if (p1 !== p2) { App.toast(I18N.t('admin.passwordMismatch'), 'error'); return; }
-    Store.changeCredentials(u, p1);
-    $('#authForm').reset();
-    App.toast(I18N.t('admin.settingsSaved'), 'success');
+    var btn = $('#authForm [type="submit"]');
+    btn.disabled = true;
+    Store.changePassword(p1).then(function () {
+      btn.disabled = false;
+      $('#authForm').reset();
+      App.toast(I18N.t('admin.settingsSaved'), 'success');
+    }).catch(function (err) {
+      btn.disabled = false;
+      App.toast((err && err.message) || 'Could not change the password.', 'error');
+    });
   });
 
   $('#exportBtn').addEventListener('click', function () {
@@ -922,20 +935,20 @@
     var f = this.files[0]; if (!f) return;
     var fr = new FileReader();
     fr.onload = function () {
-      try {
-        Store.import(fr.result);
+      Store.import(fr.result).then(function () {
         App.toast(I18N.t('common.saved'), 'success');
         refreshAll();
-      } catch (err) { App.toast('Invalid backup file', 'error'); }
+      }).catch(function () { App.toast('Invalid backup file', 'error'); });
     };
     fr.readAsText(f);
     this.value = '';
   });
   $('#resetBtn').addEventListener('click', function () {
     if (!confirm(I18N.t('admin.resetConfirm'))) return;
-    Store.reset();
-    App.toast(I18N.t('admin.settingsSaved'), 'success');
-    refreshAll();
+    Store.reset().then(function () {
+      App.toast(I18N.t('admin.settingsSaved'), 'success');
+      refreshAll();
+    }).catch(function () { App.toast('Could not reset the content.', 'error'); });
   });
 
   /* ------------------------------------------------------- dashboard */
@@ -1072,7 +1085,19 @@
   App.bindSettings(document);
   paintNav();
   paintSettings();
-  if (Store.isAdmin()) showApp(); else showLogin();
+
+  /* Supabase restores the login asynchronously, so the gate waits for the
+     first resolved session instead of reading it synchronously. */
+  var shown = 'login';
+  showLogin();
+  Store.onAuth(function (s) {
+    if (s) {
+      if (shown !== 'app') { shown = 'app'; showApp(); }
+    } else if (shown !== 'login') {
+      shown = 'login';
+      showLogin();
+    }
+  });
 })();
 </script>
 </body>

@@ -261,6 +261,7 @@
 
 <div id="site-footer"></div>
 
+<script src="assets/js/vendor/supabase.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/app.js"></script>
@@ -381,7 +382,7 @@
   function paintHero() {
     var h = $('#heroPhoto');
     if (!h) return;
-    var uploaded = Store.all('gallery').filter(function (g) { return String(g.src).indexOf('data:') === 0; });
+    var uploaded = Store.all('gallery').filter(function (g) { return g.src && String(g.src).indexOf('assets/') !== 0; });
     if (uploaded.length) h.src = uploaded[0].src;
   }
 

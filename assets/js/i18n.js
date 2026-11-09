@@ -330,11 +330,11 @@
       /* ---------------- admin ---------------- */
       'admin.title': 'Admin Login',
       'admin.subtitle': 'Sign in to manage school content',
-      'admin.username': 'Username',
+      'admin.username': 'Email',
       'admin.password': 'Password',
       'admin.signIn': 'Sign In',
-      'admin.demoHint': 'Default demo credentials — username: admin · password: gges36',
-      'admin.invalid': 'Incorrect username or password',
+      'admin.demoHint': 'Use the school administrator email and password',
+      'admin.invalid': 'Incorrect email or password',
       'admin.dashboard': 'Dashboard',
       'admin.welcome': 'Welcome back',
       'admin.logout': 'Sign out',
@@ -367,9 +367,9 @@
       'admin.editPhoto': 'Edit Photo',
       'admin.confirmDelete': 'Delete this record permanently?',
       'admin.authTitle': 'Login Credentials',
-      'admin.authText': 'Change the administrator username and password.',
+      'admin.authText': 'Change the administrator password.',
       'admin.heroTitle': 'Homepage Photo',
-      'admin.heroHint': 'This photo is the large banner behind the welcome text on the home page. JPG or PNG under 900 KB, ideally a wide landscape picture.',
+      'admin.heroHint': 'This photo is the large banner behind the welcome text on the home page. JPG or PNG, ideally a wide landscape picture.',
       'admin.newUsername': 'New username',
       'admin.newPassword': 'New password',
       'admin.confirmPassword': 'Confirm password',
@@ -382,7 +382,7 @@
       'admin.resetBtn': 'Reset to demo data',
       'admin.resetConfirm': 'This will erase all current data and restore the original demo content. Continue?',
       'admin.dangerZone': 'Danger Zone',
-      'admin.galleryHint': 'Upload original photographs of your school. Images are stored locally in this browser (recommended size under 900 KB each).',
+      'admin.galleryHint': 'Upload original photographs of your school. Pictures are compressed and stored in the cloud, so every visitor sees them.',
       'admin.dropTitle': 'Drop photos here or click to browse',
       'admin.dropHint': 'JPG, PNG or WEBP · multiple files supported',
       'admin.uploaded': 'photo(s) uploaded',
@@ -396,9 +396,9 @@
       'admin.noRecords': 'No records yet',
       'admin.selectStudent': '— Select a student to auto-fill —',
       'admin.exportCsv': 'Export CSV',
-      'admin.storageUsed': 'Local storage used',
+      'admin.storageUsed': 'Cloud content size',
       'admin.lastUpdated': 'Last updated',
-      'admin.realtimeNote': 'Changes save instantly and sync live to every open tab of the website.'
+      'admin.realtimeNote': 'Everything you save goes straight to the cloud and appears on the live website for all visitors.'
     },
 
     ur: {
@@ -708,11 +708,11 @@
 
       'admin.title': 'ایڈمن لاگ ان',
       'admin.subtitle': 'اسکول کا مواد سنبھالنے کے لیے سائن ان کریں',
-      'admin.username': 'صارف نام',
+      'admin.username': 'ای میل',
       'admin.password': 'پاس ورڈ',
       'admin.signIn': 'سائن ان',
-      'admin.demoHint': 'ڈیمو صارف نام: admin · پاس ورڈ: gges36',
-      'admin.invalid': 'صارف نام یا پاس ورڈ غلط ہے',
+      'admin.demoHint': 'اسکول ایڈمن کی ای میل اور پاس ورڈ استعمال کریں',
+      'admin.invalid': 'ای میل یا پاس ورڈ غلط ہے',
       'admin.dashboard': 'ڈیش بورڈ',
       'admin.welcome': 'خوش آمدید',
       'admin.logout': 'سائن آؤٹ',
@@ -745,9 +745,9 @@
       'admin.editPhoto': 'تصویر میں ترمیم',
       'admin.confirmDelete': 'کیا اس ریکارڈ کو مستقل حذف کر دیا جائے؟',
       'admin.authTitle': 'لاگ ان کی معلومات',
-      'admin.authText': 'ایڈمن کا صارف نام اور پاس ورڈ تبدیل کریں۔',
+      'admin.authText': 'ایڈمن کا پاس ورڈ تبدیل کریں۔',
       'admin.heroTitle': 'ہوم پیج کی تصویر',
-      'admin.heroHint': 'یہ تصویر ہوم پیج پر خوش آمدید کے متن کے پیچھے بڑے بینر کے طور پر لگتی ہے۔ جے پی جی یا پی این جی، 900 کے بی سے کم، اور چوڑی (لینڈ اسکیپ) ہو تو بہتر ہے۔',
+      'admin.heroHint': 'یہ تصویر ہوم پیج پر خوش آمدید کے متن کے پیچھے بڑے بینر کے طور پر لگتی ہے۔ جے پی جی یا پی این جی، اور چوڑی (لینڈ اسکیپ) ہو تو بہتر ہے۔',
       'admin.newUsername': 'نیا صارف نام',
       'admin.newPassword': 'نیا پاس ورڈ',
       'admin.confirmPassword': 'پاس ورڈ دوبارہ لکھیں',
@@ -760,7 +760,7 @@
       'admin.resetBtn': 'ڈیمو ڈیٹا پر ری سیٹ کریں',
       'admin.resetConfirm': 'اس سے موجودہ تمام ڈیٹا مٹ جائے گا اور اصل ڈیمو مواد بحال ہو جائے گا۔ جاری رکھیں؟',
       'admin.dangerZone': 'خطرناک حصہ',
-      'admin.galleryHint': 'اپنے اسکول کی اصل تصاویر اپ لوڈ کریں۔ تصاویر اسی براؤزر میں محفوظ ہوتی ہیں (ہر تصویر 900 KB سے کم رکھیں)۔',
+      'admin.galleryHint': 'اپنے اسکول کی اصل تصاویر اپ لوڈ کریں۔ تصاویر دباؤ کر کے کلاؤڈ میں محفوظ ہوتی ہیں، اس لیے ہر وزٹر انہیں دیکھ سکتا ہے۔',
       'admin.dropTitle': 'تصاویر یہاں چھوڑیں یا کلک کر کے منتخب کریں',
       'admin.dropHint': 'JPG، PNG یا WEBP · ایک سے زیادہ فائلیں',
       'admin.uploaded': 'تصاویر اپ لوڈ ہو گئیں',
@@ -774,9 +774,9 @@
       'admin.noRecords': 'ابھی کوئی ریکارڈ نہیں',
       'admin.selectStudent': '— طالبہ منتخب کریں (خودکار بھرنے کے لیے) —',
       'admin.exportCsv': 'CSV ڈاؤن لوڈ',
-      'admin.storageUsed': 'مقامی اسٹوریج کا استعمال',
+      'admin.storageUsed': 'کلاؤڈ مواد کا حجم',
       'admin.lastUpdated': 'آخری اپ ڈیٹ',
-      'admin.realtimeNote': 'تبدیلیاں فوراً محفوظ ہو کر ویب سائٹ کے تمام کھلے ٹیبز میں لائیو منتقل ہوتی ہیں۔'
+      'admin.realtimeNote': 'آپ جو کچھ محفوظ کرتے ہیں وہ سیدھا کلاؤڈ میں جاتا ہے اور تمام وزٹرز کو لائیو ویب سائٹ پر نظر آتا ہے۔'
     }
   };
 
