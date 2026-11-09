@@ -1,0 +1,12 @@
+# Local tooling (portable Git, etc.)
+.tools/
+
+# Generated HTML share packages
+.trae-html-share-packages/
+
+# OS / editor cruft
+Thumbs.db
+desktop.ini
+Desktop.ini
+.DS_Store
+*.log
