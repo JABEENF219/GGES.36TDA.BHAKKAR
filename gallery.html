@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="Photo gallery of GGES 36 TDA Bhakkar — campus, classrooms, facilities, events and sports.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.gallery"></span>
+      </nav>
+      <h1 data-i18n="gallery.title"></h1>
+      <p data-i18n="gallery.text"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="between mb-3">
+        <div class="filters" id="filters"></div>
+        <span class="badge badge--live" data-i18n="common.live"></span>
+      </div>
+
+      <div class="gallery-grid" id="grid"></div>
+
+      <div class="empty mt-3" id="empty" style="display:none">
+        <div class="empty__icon">🖼️</div>
+        <h3 data-i18n="gallery.empty"></h3>
+        <p class="small mt-1" data-i18n="gallery.emptyHint"></p>
+        <a class="btn btn--primary btn--sm mt-3" href="admin.html" data-i18n="nav.admin"></a>
+      </div>
+
+      <p class="tiny muted mt-3 center" data-i18n="gallery.uploadHint"></p>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="icon-btn lightbox__close" id="lbClose" aria-label="Close">✕</button>
+  <button class="icon-btn lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="Previous">‹</button>
+  <button class="icon-btn lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Next">›</button>
+  <div>
+    <img id="lbImg" src="" alt="">
+    <p class="lightbox__cap" id="lbCap"></p>
+  </div>
+</div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, $$ = App.$$, esc = App.esc;
+  App.init({ active: 'gallery' });
+
+  var CATS = ['Campus', 'Academics', 'Facilities', 'Events', 'Sports', 'Other'];
+  var activeCat = 'all';
+  var visible = [];
+  var index = 0;
+
+  function catLabel(c) { return I18N.t('gallery.cat.' + c, c); }
+
+  function paintFilters() {
+    var used = {};
+    Store.all('gallery').forEach(function (g) { used[g.category || 'Other'] = true; });
+    var list = CATS.filter(function (c) { return used[c]; });
+    var all = ['<button class="chip" data-cat="all" aria-pressed="' + (activeCat === 'all') + '">' + esc(I18N.t('common.all')) + '</button>'];
+    host.innerHTML = all.concat(list.map(function (c) {
+      return '<button class="chip" data-cat="' + esc(c) + '" aria-pressed="' + (activeCat === c) + '">' + esc(catLabel(c)) + '</button>';
+    })).join('');
+    $$('.chip', host).forEach(function (b) {
+      b.addEventListener('click', function () { activeCat = b.getAttribute('data-cat'); paintFilters(); paintGrid(); });
+    });
+  }
+  var host = $('#filters');
+
+  function items() {
+    var lang = I18N.lang();
+    var list = Store.all('gallery');
+    if (activeCat !== 'all') list = list.filter(function (g) { return (g.category || 'Other') === activeCat; });
+    return list.map(function (g) {
+      return { src: g.src, cap: (lang === 'ur' && g.titleUr) ? g.titleUr : (g.title || ''), cat: g.category || 'Other' };
+    });
+  }
+
+  function paintGrid() {
+    visible = items();
+    var grid = $('#grid');
+    $('#empty').style.display = visible.length ? 'none' : '';
+    grid.innerHTML = visible.map(function (g, i) {
+      return '<figure class="gitem" data-i="' + i + '" tabindex="0" role="button" aria-label="' + esc(g.cap) + '">' +
+        '<img src="' + esc(g.src) + '" alt="' + esc(g.cap) + '" loading="lazy">' +
+        '<figcaption class="gitem__cap">' + esc(g.cap) + '</figcaption>' +
+      '</figure>';
+    }).join('');
+    $$('.gitem', grid).forEach(function (el) {
+      function open() { show(parseInt(el.getAttribute('data-i'), 10)); }
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+  }
+
+  /* ---------- lightbox ---------- */
+  var lb = $('#lightbox');
+  function show(i) {
+    if (!visible.length) return;
+    index = (i + visible.length) % visible.length;
+    $('#lbImg').src = visible[index].src;
+    $('#lbImg').alt = visible[index].cap;
+    $('#lbCap').textContent = visible[index].cap;
+    lb.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function hide() { lb.classList.remove('is-open'); document.body.style.overflow = ''; }
+
+  $('#lbClose').addEventListener('click', hide);
+  $('#lbPrev').addEventListener('click', function () { show(index - 1); });
+  $('#lbNext').addEventListener('click', function () { show(index + 1); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) hide(); });
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape') hide();
+    if (e.key === 'ArrowRight') show(index + (I18N.lang() === 'ur' ? -1 : 1));
+    if (e.key === 'ArrowLeft') show(index + (I18N.lang() === 'ur' ? 1 : -1));
+  });
+
+  function paintAll() { paintFilters(); paintGrid(); }
+  paintAll();
+  Store.subscribe('gallery', paintAll);
+  document.addEventListener('gges:langchange', paintAll);
+})();
+</script>
+</body>
+</html>
