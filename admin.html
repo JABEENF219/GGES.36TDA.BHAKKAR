@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel — GGES 36 TDA BHAKKAR</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#06432f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-body">
+
+<!-- ============================= LOGIN ============================= -->
+<div class="login-wrap" id="loginView">
+  <div class="login-card">
+    <div class="brand">
+      <span class="brand__logo">G</span>
+      <span class="brand__text">
+        <span class="brand__name" data-setting="schoolName"></span>
+        <span class="brand__sub" data-i18n="nav.admin"></span>
+      </span>
+    </div>
+    <h2 class="center" data-i18n="admin.title"></h2>
+    <p class="center muted small mt-1" data-i18n="admin.subtitle"></p>
+
+    <form id="loginForm" class="stack mt-3" novalidate>
+      <div class="field">
+        <label for="u" data-i18n="admin.username"></label>
+        <input class="input" id="u" autocomplete="username" required placeholder="admin">
+      </div>
+      <div class="field">
+        <label for="p" data-i18n="admin.password"></label>
+        <input class="input" id="p" type="password" autocomplete="current-password" required placeholder="••••••">
+      </div>
+      <button class="btn btn--primary btn--block" type="submit" data-i18n="admin.signIn"></button>
+    </form>
+
+    <p class="tiny muted center mt-3" data-i18n="admin.demoHint"></p>
+    <div class="row mt-3" style="justify-content:center">
+      <button class="icon-btn" id="loginLang" data-i18n-title="nav.lang" aria-label="Language">اردو</button>
+      <a class="btn btn--ghost btn--sm" href="index.html" data-i18n="admin.viewSite"></a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= APP ============================= -->
+<div class="admin-shell hide" id="adminApp">
+  <aside class="admin-side">
+    <div class="brand">
+      <span class="brand__logo" id="sideLogo">G</span>
+      <b data-setting="schoolName"></b>
+    </div>
+    <nav class="admin-nav" id="adminNav"></nav>
+    <div class="mt-3" style="padding-top:1rem;border-top:1px solid rgba(255,255,255,.12)">
+      <p class="tiny" style="color:#8fb5a6" data-i18n="admin.realtimeNote"></p>
+      <p class="tiny mt-2" style="color:#8fb5a6"><span data-i18n="admin.storageUsed"></span>: <b id="storageUsed">—</b></p>
+    </div>
+    <div class="row mt-3">
+      <a class="btn btn--ghost btn--sm" href="index.html" data-i18n="admin.viewSite"></a>
+      <button class="btn btn--danger btn--sm" id="logoutBtn" data-i18n="admin.logout"></button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-head">
+      <div>
+        <h1 id="viewTitle" data-i18n="admin.dashboard"></h1>
+        <p class="small muted"><span data-i18n="admin.welcome"></span>, <b id="whoami"></b> · <span id="lastUpdated"></span></p>
+      </div>
+      <div class="row">
+        <span class="badge badge--live" data-i18n="common.live"></span>
+        <button class="icon-btn" id="appLang" data-i18n-title="nav.lang">اردو</button>
+        <button class="icon-btn" id="appTheme" data-i18n-title="nav.theme">◐</button>
+      </div>
+    </div>
+
+    <section class="admin-view" id="view-dashboard">
+      <div class="kpi" id="kpis"></div>
+      <div class="grid g-2">
+        <div class="panel">
+          <div class="panel__head"><h3 data-i18n="admin.recentActivity"></h3></div>
+          <div class="stack" id="activityList"></div>
+        </div>
+        <div class="panel">
+          <div class="panel__head">
+            <h3 data-i18n="admin.pendingAdmissions"></h3>
+            <button class="btn btn--ghost btn--xs" data-goto="admissions" data-i18n="common.viewAll"></button>
+          </div>
+          <div class="stack" id="recentAdmissions"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-view" id="view-notices">
+      <div class="admin-tools">
+        <button class="btn btn--primary btn--sm" data-new="notices" data-i18n="admin.newNotice"></button>
+        <div class="searchbar" style="max-width:22rem">
+          <input class="input" data-search="notices" data-i18n-ph="common.searchPlaceholder">
+        </div>
+      </div>
+      <div class="table-wrap"><table class="data"><thead><tr id="th-notices"></tr></thead><tbody id="tb-notices"></tbody></table></div>
+      <div class="empty mt-3 hide" id="empty-notices" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-students">
+      <div class="admin-tools">
+        <button class="btn btn--primary btn--sm" data-new="students" data-i18n="admin.newStudent"></button>
+        <div class="searchbar" style="max-width:22rem">
+          <input class="input" data-search="students" data-i18n-ph="common.searchPlaceholder">
+        </div>
+        <span class="spacer"></span>
+        <button class="btn btn--outline btn--sm" data-csv="students" data-i18n="admin.exportCsv"></button>
+      </div>
+      <div class="table-wrap"><table class="data"><thead><tr id="th-students"></tr></thead><tbody id="tb-students"></tbody></table></div>
+      <div class="empty mt-3 hide" id="empty-students" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-teachers">
+      <div class="admin-tools">
+        <button class="btn btn--primary btn--sm" data-new="teachers" data-i18n="admin.newTeacher"></button>
+        <div class="searchbar" style="max-width:22rem">
+          <input class="input" data-search="teachers" data-i18n-ph="common.searchPlaceholder">
+        </div>
+      </div>
+      <div class="table-wrap"><table class="data"><thead><tr id="th-teachers"></tr></thead><tbody id="tb-teachers"></tbody></table></div>
+      <div class="empty mt-3 hide" id="empty-teachers" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-results">
+      <div class="admin-tools">
+        <button class="btn btn--primary btn--sm" data-new="results" data-i18n="admin.newResult"></button>
+        <div class="searchbar" style="max-width:22rem">
+          <input class="input" data-search="results" data-i18n-ph="common.searchPlaceholder">
+        </div>
+        <span class="spacer"></span>
+        <button class="btn btn--outline btn--sm" data-csv="results" data-i18n="admin.exportCsv"></button>
+      </div>
+      <div class="table-wrap"><table class="data"><thead><tr id="th-results"></tr></thead><tbody id="tb-results"></tbody></table></div>
+      <div class="empty mt-3 hide" id="empty-results" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-gallery">
+      <div class="panel mb-3">
+        <div class="panel__head">
+          <h3 data-i18n="admin.uploadPhoto"></h3>
+          <span class="badge badge--info" data-i18n="admin.galleryHint"></span>
+        </div>
+        <div class="drop" id="drop">
+          <div style="font-size:1.9rem">🖼️</div>
+          <b data-i18n="admin.dropTitle"></b>
+          <span data-i18n="admin.dropHint"></span>
+          <input type="file" id="fileInput" accept="image/*" multiple class="hide">
+        </div>
+        <div class="form-grid mt-3">
+          <div class="field">
+            <label for="upCat" data-i18n="admin.photoCat"></label>
+            <select class="select" id="upCat"></select>
+          </div>
+          <div class="field">
+            <label for="upTitle" data-i18n="admin.photoTitle"></label>
+            <input class="input" id="upTitle" placeholder="e.g. Annual Prize Distribution">
+          </div>
+        </div>
+      </div>
+      <div class="thumb-grid" id="thumbGrid"></div>
+      <div class="empty mt-3 hide" id="empty-gallery" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-admissions">
+      <div class="admin-tools">
+        <div class="searchbar" style="max-width:22rem">
+          <input class="input" data-search="admissions" data-i18n-ph="common.searchPlaceholder">
+        </div>
+        <span class="spacer"></span>
+        <button class="btn btn--outline btn--sm" data-csv="admissions" data-i18n="admin.exportCsv"></button>
+      </div>
+      <div class="table-wrap"><table class="data"><thead><tr id="th-admissions"></tr></thead><tbody id="tb-admissions"></tbody></table></div>
+      <div class="empty mt-3 hide" id="empty-admissions" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-messages">
+      <div class="stack" id="msgList"></div>
+      <div class="empty mt-3 hide" id="empty-messages" data-i18n="admin.noRecords"></div>
+    </section>
+
+    <section class="admin-view" id="view-settings">
+      <div class="grid g-2" style="align-items:start">
+        <form class="panel" id="settingsForm">
+          <div class="panel__head"><h3 data-i18n="about.schoolInfo"></h3></div>
+          <div class="form-grid" id="settingsFields"></div>
+          <button class="btn btn--primary mt-3" type="submit" data-i18n="common.saveChanges"></button>
+        </form>
+
+        <div class="stack">
+          <form class="panel" id="logoForm">
+            <div class="panel__head"><h3 data-i18n="common.uploadPhoto"></h3></div>
+            <div class="row" style="gap:1rem">
+              <span class="brand__logo" id="logoPreview" style="width:74px;height:74px;font-size:1.5rem">G</span>
+              <div>
+                <b class="small">School logo</b>
+                <p class="tiny muted">PNG or JPG, under 900 KB.</p>
+                <input type="file" id="logoFile" accept="image/*" class="mt-1">
+              </div>
+            </div>
+            <button class="btn btn--outline btn--sm mt-2" id="logoRemove" type="button" data-i18n="common.removePhoto"></button>
+          </form>
+
+          <div class="panel" id="heroForm">
+            <div class="panel__head"><h3 data-i18n="admin.heroTitle"></h3></div>
+            <p class="small muted mb-2" data-i18n="admin.heroHint"></p>
+            <img id="heroPreview" alt="Homepage photo"
+                 style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:var(--surface-2)">
+            <div class="row mt-2" style="gap:.6rem;align-items:center">
+              <input type="file" id="heroFile" accept="image/*" class="small">
+              <button class="btn btn--outline btn--sm" id="heroRemove" type="button" data-i18n="common.removePhoto"></button>
+            </div>
+          </div>
+
+          <form class="panel" id="authForm">
+            <div class="panel__head"><h3 data-i18n="admin.authTitle"></h3></div>
+            <p class="small muted mb-2" data-i18n="admin.authText"></p>
+            <div class="form-grid">
+              <div class="field"><label for="nUser" data-i18n="admin.newUsername"></label><input class="input" id="nUser"></div>
+              <div class="field"><label for="nPass" data-i18n="admin.newPassword"></label><input class="input" id="nPass" type="password"></div>
+              <div class="field"><label for="nPass2" data-i18n="admin.confirmPassword"></label><input class="input" id="nPass2" type="password"></div>
+            </div>
+            <button class="btn btn--primary mt-3" type="submit" data-i18n="common.save"></button>
+          </form>
+
+          <div class="panel">
+            <div class="panel__head"><h3 data-i18n="admin.backup"></h3></div>
+            <p class="small muted mb-2" data-i18n="admin.backupText"></p>
+            <div class="row">
+              <button class="btn btn--outline btn--sm" id="exportBtn" data-i18n="admin.exportBtn"></button>
+              <button class="btn btn--ghost btn--sm" id="importBtn" data-i18n="admin.importBtn"></button>
+              <input type="file" id="importFile" accept="application/json,.json" class="hide">
+            </div>
+          </div>
+
+          <div class="panel" style="border-color:var(--danger)">
+            <div class="panel__head"><h3 style="color:var(--danger)" data-i18n="admin.dangerZone"></h3></div>
+            <button class="btn btn--danger btn--sm" id="resetBtn" data-i18n="admin.resetBtn"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-view" id="view-activity">
+      <div class="panel">
+        <div class="panel__head"><h3 data-i18n="admin.navActivity"></h3></div>
+        <div class="stack" id="activityFull"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============================= MODAL ============================= -->
+<div class="modal" id="formModal" role="dialog" aria-modal="true" aria-labelledby="fmTitle">
+  <div class="modal__box modal__box--wide">
+    <div class="modal__head">
+      <h3 id="fmTitle"></h3>
+      <button class="icon-btn" id="fmClose" aria-label="Close">✕</button>
+    </div>
+    <form id="fmForm">
+      <div class="modal__body">
+        <div class="form-grid" id="fmFields"></div>
+      </div>
+      <div class="modal__foot">
+        <button class="btn btn--ghost" type="button" id="fmCancel" data-i18n="common.cancel"></button>
+        <button class="btn btn--primary" type="submit" data-i18n="common.save"></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="detailModal" role="dialog" aria-modal="true">
+  <div class="modal__box">
+    <div class="modal__head"><h3 id="dmTitle"></h3><button class="icon-btn" id="dmClose" aria-label="Close">✕</button></div>
+    <div class="modal__body" id="dmBody"></div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" id="dmPrint" data-i18n="common.print"></button>
+      <button class="btn btn--primary" id="dmOk" data-i18n="common.close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, $$ = App.$$, esc = App.esc;
+  var L = function () { return I18N.lang(); };
+
+  /* ------------------------------------------------------- schemas */
+  var CLASS_OPTS = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8'];
+  var CAT_OPTS = ['Campus', 'Academics', 'Facilities', 'Events', 'Sports', 'Other'];
+  var NOTICE_CATS = ['General', 'Admissions', 'Examination', 'Events', 'Health', 'Holiday'];
+
+  var SCHEMAS = {
+    notices: {
+      titleKey: 'admin.navNotices', newKey: 'admin.newNotice', editKey: 'admin.editNotice',
+      fields: [
+        { key: 'title', labelKey: 'common.title', type: 'text', required: true },
+        { key: 'titleUr', label: 'عنوان (اردو)', type: 'text' },
+        { key: 'category', labelKey: 'common.category', type: 'select', options: NOTICE_CATS },
+        { key: 'date', labelKey: 'common.date', type: 'date' },
+        { key: 'author', label: 'Issued by', type: 'text' },
+        { key: 'pinned', labelKey: 'admin.pinned', type: 'checkbox' },
+        { key: 'body', labelKey: 'admin.noticeBody', type: 'textarea', required: true },
+        { key: 'bodyUr', label: 'تفصیل (اردو)', type: 'textarea' }
+      ],
+      columns: [
+        { k: 'title', labelKey: 'common.title', get: function (n) { return L() === 'ur' && n.titleUr ? n.titleUr : n.title; }, strong: true },
+        { k: 'category', labelKey: 'common.category' },
+        { k: 'date', labelKey: 'common.date', get: function (n) { return Store.formatDate(n.date || n.createdAt, L()); } },
+        { k: 'author', label: 'Issued by' },
+        { k: 'pinned', label: '', get: function (n) { return n.pinned ? '<span class="badge badge--gold">★</span>' : '—'; } }
+      ]
+    },
+
+    students: {
+      titleKey: 'admin.navStudents', newKey: 'admin.newStudent', editKey: 'admin.editStudent',
+      fields: [
+        { key: 'rollNo', labelKey: 'common.rollNo', type: 'text', required: true },
+        { key: 'name', labelKey: 'common.name', type: 'text', required: true },
+        { key: 'nameUr', label: 'نام (اردو)', type: 'text' },
+        { key: 'fatherName', labelKey: 'common.fatherName', type: 'text' },
+        { key: 'className', labelKey: 'common.class', type: 'select', options: CLASS_OPTS },
+        { key: 'section', labelKey: 'common.section', type: 'select', options: ['A', 'B', 'C'] },
+        { key: 'dob', labelKey: 'adm.dob', type: 'date' },
+        { key: 'phone', labelKey: 'common.phone', type: 'text' },
+        { key: 'status', labelKey: 'common.status', type: 'select', options: ['Active', 'Inactive'] },
+        { key: 'address', labelKey: 'common.address', type: 'text', full: true },
+        { key: 'photo', labelKey: 'common.photo', type: 'image', full: true }
+      ],
+      columns: [
+        { k: 'rollNo', labelKey: 'common.rollNo', strong: true },
+        { k: 'name', labelKey: 'common.name', get: function (s) { return L() === 'ur' && s.nameUr ? s.nameUr : s.name; } },
+        { k: 'fatherName', labelKey: 'common.fatherName' },
+        { k: 'className', labelKey: 'common.class' },
+        { k: 'section', labelKey: 'common.section' },
+        { k: 'status', labelKey: 'common.status', get: function (s) { return s.status || 'Active'; } }
+      ]
+    },
+
+    teachers: {
+      titleKey: 'admin.navTeachers', newKey: 'admin.newTeacher', editKey: 'admin.editTeacher',
+      fields: [
+        { key: 'name', labelKey: 'common.name', type: 'text', required: true },
+        { key: 'nameUr', label: 'نام (اردو)', type: 'text' },
+        { key: 'role', label: 'Designation', type: 'text' },
+        { key: 'roleUr', label: 'عہدہ (اردو)', type: 'text' },
+        { key: 'subject', labelKey: 'teachers.subject', type: 'text' },
+        { key: 'qualification', labelKey: 'teachers.qualification', type: 'text' },
+        { key: 'qualificationUr', label: 'تعلیمی قابلیت (اردو)', type: 'text' },
+        { key: 'since', labelKey: 'teachers.since', type: 'text' },
+        { key: 'phone', labelKey: 'common.phone', type: 'text' },
+        { key: 'photo', labelKey: 'common.photo', type: 'image', full: true }
+      ],
+      columns: [
+        { k: 'name', labelKey: 'common.name', strong: true, get: function (t) { return L() === 'ur' && t.nameUr ? t.nameUr : t.name; } },
+        { k: 'role', label: 'Designation', get: function (t) { return L() === 'ur' && t.roleUr ? t.roleUr : t.role; } },
+        { k: 'subject', labelKey: 'teachers.subject' },
+        { k: 'qualification', labelKey: 'teachers.qualification' },
+        { k: 'since', labelKey: 'teachers.since' }
+      ]
+    },
+
+    results: {
+      titleKey: 'admin.navResults', newKey: 'admin.newResult', editKey: 'admin.editResult',
+      fields: [
+        { key: 'rollNo', labelKey: 'common.rollNo', type: 'text', required: true },
+        { key: 'studentName', labelKey: 'results.studentName', type: 'text', required: true },
+        { key: 'className', labelKey: 'common.class', type: 'select', options: CLASS_OPTS },
+        { key: 'exam', labelKey: 'results.exam', type: 'text' },
+        { key: 'year', labelKey: 'results.year', type: 'text' },
+        { key: 'totalMarks', labelKey: 'results.totalMarks', type: 'number' },
+        { key: 'obtainedMarks', labelKey: 'results.obtained', type: 'number' },
+        { key: 'grade', labelKey: 'results.grade', type: 'text' },
+        { key: 'position', labelKey: 'results.position', type: 'text' },
+        { key: 'remarks', labelKey: 'results.remarks', type: 'text', full: true }
+      ],
+      columns: [
+        { k: 'rollNo', labelKey: 'common.rollNo', strong: true },
+        { k: 'studentName', labelKey: 'results.studentName' },
+        { k: 'className', labelKey: 'common.class' },
+        { k: 'exam', labelKey: 'results.exam' },
+        { k: 'marks', labelKey: 'results.obtained', get: function (r) { return (r.obtainedMarks || 0) + ' / ' + (r.totalMarks || 0); } },
+        { k: 'grade', labelKey: 'results.grade', get: function (r) { var g = r.grade || Store.gradeFor(pct(r)); return '<span class="grade grade--' + esc(g) + '">' + esc(g) + '</span>'; } }
+      ]
+    }
+  };
+
+  function pct(r) {
+    var t = parseFloat(r.totalMarks) || 0, o = parseFloat(r.obtainedMarks) || 0;
+    return t ? Math.round((o / t) * 1000) / 10 : 0;
+  }
+
+  /* ------------------------------------------------------- auth gate */
+  function showLogin() { $('#loginView').classList.remove('hide'); $('#adminApp').classList.add('hide'); }
+  function showApp() {
+    $('#loginView').classList.add('hide');
+    $('#adminApp').classList.remove('hide');
+    var s = Store.session();
+    $('#whoami').textContent = s ? s.username : 'admin';
+    var logo = $('#sideLogo');
+    var st = Store.settings();
+    logo.innerHTML = st.logoData ? '<img src="' + esc(st.logoData) + '" alt="">' : 'G';
+    setView('dashboard');
+    refreshAll();
+  }
+
+  $('#loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (Store.login($('#u').value, $('#p').value)) {
+      $('#p').value = '';
+      showApp();
+      App.toast(I18N.t('admin.welcome'), 'success');
+    } else {
+      App.toast(I18N.t('admin.invalid'), 'error');
+      $('#p').value = '';
+      $('#p').focus();
+    }
+  });
+
+  $('#logoutBtn').addEventListener('click', function () { Store.logout(); showLogin(); });
+
+  /* ------------------------------------------------------- navigation */
+  var VIEWS = [
+    { id: 'dashboard', key: 'admin.navDashboard', icon: '📊' },
+    { id: 'notices', key: 'admin.navNotices', icon: '📢' },
+    { id: 'students', key: 'admin.navStudents', icon: '🎒' },
+    { id: 'teachers', key: 'admin.navTeachers', icon: '👩‍🏫' },
+    { id: 'results', key: 'admin.navResults', icon: '📝' },
+    { id: 'gallery', key: 'admin.navGallery', icon: '🖼️' },
+    { id: 'admissions', key: 'admin.navAdmissions', icon: '📋' },
+    { id: 'messages', key: 'admin.navMessages', icon: '✉️' },
+    { id: 'settings', key: 'admin.navSettings', icon: '⚙️' },
+    { id: 'activity', key: 'admin.navActivity', icon: '🕘' }
+  ];
+  var currentView = 'dashboard';
+
+  function paintNav() {
+    $('#adminNav').innerHTML = VIEWS.map(function (v) {
+      return '<button data-view="' + v.id + '" class="' + (v.id === currentView ? 'is-active' : '') + '">' +
+        '<span>' + v.icon + '</span><span>' + esc(I18N.t(v.key)) + '</span></button>';
+    }).join('');
+    $$('#adminNav button').forEach(function (b) {
+      b.addEventListener('click', function () { setView(b.getAttribute('data-view')); });
+    });
+    $$('[data-goto]').forEach(function (b) {
+      b.addEventListener('click', function () { setView(b.getAttribute('data-goto')); });
+    });
+  }
+
+  function setView(id) {
+    currentView = id;
+    $$('.admin-view').forEach(function (v) { v.classList.remove('is-active'); });
+    var el = $('#view-' + id);
+    if (el) el.classList.add('is-active');
+    $$('#adminNav button').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-view') === id);
+    });
+    var v = VIEWS.filter(function (x) { return x.id === id; })[0];
+    $('#viewTitle').textContent = v ? I18N.t(v.key) : '';
+    if (window.innerWidth < 901) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ------------------------------------------------------- tables */
+  var searches = { notices: '', students: '', teachers: '', results: '', admissions: '' };
+
+  function rowsFor(name) {
+    var cfg = SCHEMAS[name];
+    var all = Store.all(name);
+    var q = searches[name].toLowerCase();
+    if (q) {
+      all = all.filter(function (item) {
+        return Object.keys(item).join(' ').toLowerCase().indexOf(q) > -1;
+      });
+    }
+    return all;
+  }
+
+  function paintTable(name) {
+    var cfg = SCHEMAS[name];
+    var rows = rowsFor(name);
+    $('#th-' + name).innerHTML = cfg.columns.map(function (c) {
+      return '<th>' + esc(c.labelKey ? I18N.t(c.labelKey) : (c.label || '')) + '</th>';
+    }).join('') + '<th>' + esc(I18N.t('common.actions')) + '</th>';
+
+    $('#empty-' + name).classList.toggle('hide', rows.length > 0);
+
+    $('#tb-' + name).innerHTML = rows.map(function (r) {
+      var tds = cfg.columns.map(function (c) {
+        var v = c.get ? c.get(r) : (r[c.k] === undefined || r[c.k] === '' ? '—' : r[c.k]);
+        return '<td class="' + (c.strong ? 'cell-strong' : '') + '">' + (c.get ? v : esc(v)) + '</td>';
+      }).join('');
+      return '<tr>' + tds +
+        '<td><div class="row" style="gap:.3rem;flex-wrap:nowrap">' +
+          '<button class="btn btn--ghost btn--xs" data-edit="' + esc(r.id) + '" data-col="' + name + '">' + esc(I18N.t('common.edit')) + '</button>' +
+          '<button class="btn btn--danger btn--xs" data-del="' + esc(r.id) + '" data-col="' + name + '">' + esc(I18N.t('common.delete')) + '</button>' +
+        '</div></td></tr>';
+    }).join('');
+
+    $$('#tb-' + name + ' [data-edit]').forEach(function (b) {
+      b.addEventListener('click', function () { openForm(name, b.getAttribute('data-edit')); });
+    });
+    $$('#tb-' + name + ' [data-del]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm(I18N.t('admin.confirmDelete'))) return;
+        Store.remove(name, b.getAttribute('data-del'));
+        App.toast(I18N.t('common.deleted'), 'success');
+      });
+    });
+  }
+
+  /* ------------------------------------------------------- form modal */
+  var fm = $('#formModal');
+  var editing = { collection: null, id: null };
+
+  function fieldHtml(f, val) {
+    var id = 'fld_' + f.key;
+    var label = f.labelKey ? I18N.t(f.labelKey) : (f.label || f.key);
+    var full = f.full || f.type === 'textarea';
+
+    if (f.type === 'checkbox') {
+      return '<div class="field" style="grid-column:1/-1">' +
+        '<label class="row" style="gap:.6rem;cursor:pointer">' +
+          '<input type="checkbox" data-key="' + esc(f.key) + '" id="' + id + '"' + (val ? ' checked' : '') +
+            ' style="width:18px;height:18px;accent-color:var(--green-600)">' +
+          '<span>' + esc(label) + '</span>' +
+        '</label></div>';
+    }
+
+    var html = '<div class="field' + (full ? ' field--full' : '') + '">';
+    html += '<label for="' + id + '">' + esc(label) + (f.required ? ' <span class="req">*</span>' : '') + '</label>';
+
+    if (f.type === 'textarea') {
+      html += '<textarea class="textarea" id="' + id + '" data-key="' + esc(f.key) + '"' + (f.required ? ' required' : '') + '>' + esc(val || '') + '</textarea>';
+    } else if (f.type === 'select') {
+      html += '<select class="select" id="' + id + '" data-key="' + esc(f.key) + '">' +
+        '<option value="">—</option>' +
+        (f.options || []).map(function (o) {
+          return '<option value="' + esc(o) + '"' + (String(val) === String(o) ? ' selected' : '') + '>' + esc(o) + '</option>';
+        }).join('') + '</select>';
+    } else if (f.type === 'image') {
+      html += '<div class="row" style="gap:.8rem;align-items:center">' +
+        '<span class="avatar avatar--sm" data-imgprev>' + (val ? '<img src="' + esc(val) + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">' : '?') + '</span>' +
+        '<input type="hidden" data-key="' + esc(f.key) + '" value="' + esc(val || '') + '">' +
+        '<input type="file" accept="image/*" data-imginput="' + esc(f.key) + '" class="small">' +
+        '<button type="button" class="btn btn--ghost btn--xs" data-imgclear="' + esc(f.key) + '">' + esc(I18N.t('common.remove')) + '</button>' +
+      '</div>';
+    } else {
+      var type = f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text';
+      html += '<input class="input" type="' + type + '" id="' + id + '" data-key="' + esc(f.key) + '" value="' + esc(val === undefined ? '' : val) + '"' + (f.required ? ' required' : '') + '>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function openForm(name, id) {
+    var cfg = SCHEMAS[name];
+    editing = { collection: name, id: id || null };
+    var item = id ? Store.get(name, id) : {};
+    $('#fmTitle').textContent = I18N.t(id ? cfg.editKey : cfg.newKey);
+    $('#fmFields').innerHTML = cfg.fields.map(function (f) { return fieldHtml(f, item[f.key]); }).join('');
+    bindImageFields();
+    fm.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    var first = $('#fmFields [data-key].input');
+    if (first) setTimeout(function () { first.focus(); }, 120);
+  }
+
+  function bindImageFields() {
+    $$('#fmFields [data-imginput]').forEach(function (inp) {
+      inp.addEventListener('change', function () {
+        var key = inp.getAttribute('data-imginput');
+        var file = inp.files && inp.files[0];
+        if (!file) return;
+        Store.readFileAsDataURL(file, 900).then(function (dataUrl) {
+          var hidden = $('#fmFields [data-key="' + key + '"]');
+          if (hidden) hidden.value = dataUrl;
+          var prev = $('#fmFields [data-imgprev]');
+          if (prev) prev.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+          App.toast(I18N.t('common.saved'), 'success');
+        }).catch(function () { App.toast('Image too large (max 900 KB).', 'error'); });
+      });
+    });
+    $$('#fmFields [data-imgclear]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var key = b.getAttribute('data-imgclear');
+        var hidden = $('#fmFields [data-key="' + key + '"]');
+        if (hidden) hidden.value = '';
+        var prev = $('#fmFields [data-imgprev]');
+        if (prev) prev.textContent = '?';
+      });
+    });
+  }
+
+  function closeForm() { fm.classList.remove('is-open'); document.body.style.overflow = ''; }
+  $('#fmClose').addEventListener('click', closeForm);
+  $('#fmCancel').addEventListener('click', closeForm);
+  fm.addEventListener('click', function (e) { if (e.target === fm) closeForm(); });
+
+  $('#fmForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = editing.collection;
+    var cfg = SCHEMAS[name];
+    var data = {};
+    var missing = false;
+
+    cfg.fields.forEach(function (f) {
+      var el = $('#fmFields [data-key="' + f.key + '"]');
+      if (!el) return;
+      var v = f.type === 'checkbox' ? el.checked : el.value.trim();
+      if (f.required && !v) { missing = true; }
+      data[f.key] = v;
+    });
+
+    if (missing) { App.toast(I18N.t('common.requiredField'), 'error'); return; }
+
+    // auto grade for results
+    if (name === 'results' && !data.grade) data.grade = Store.gradeFor(pct(data));
+
+    if (editing.id) Store.update(name, editing.id, data);
+    else Store.add(name, data);
+
+    App.toast(I18N.t('common.saved'), 'success');
+    closeForm();
+    refreshAll();
+  });
+
+  /* ------------------------------------------------------- admissions */
+  function paintAdmissions() {
+    var rows = Store.all('admissions');
+    var q = searches.admissions.toLowerCase();
+    if (q) rows = rows.filter(function (a) { return Object.keys(a).join(' ').toLowerCase().indexOf(q) > -1; });
+
+    $('#th-admissions').innerHTML =
+      ['adm.refNo', 'adm.studentName', 'common.class', 'adm.guardianName', 'common.phone', 'common.status', 'common.date']
+        .map(function (k) { return '<th>' + esc(I18N.t(k)) + '</th>'; }).join('') +
+      '<th>' + esc(I18N.t('common.actions')) + '</th>';
+
+    $('#empty-admissions').classList.toggle('hide', rows.length > 0);
+
+    $('#tb-admissions').innerHTML = rows.map(function (a) {
+      var badge = a.reviewed ? 'badge--ok' : 'badge--warn';
+      return '<tr>' +
+        '<td class="cell-strong">' + esc(a.ref) + '</td>' +
+        '<td>' + esc(a.studentName) + '</td>' +
+        '<td>' + esc(a.className) + '</td>' +
+        '<td>' + esc(a.guardianName) + '</td>' +
+        '<td>' + esc(a.phone) + '</td>' +
+        '<td><span class="badge ' + badge + '">' + esc(a.reviewed ? I18N.t('admin.reviewed') : I18N.t('admin.newStatus')) + '</span></td>' +
+        '<td>' + esc(Store.formatDate(a.submittedAt, L())) + '</td>' +
+        '<td><div class="row" style="gap:.3rem;flex-wrap:nowrap">' +
+          '<button class="btn btn--ghost btn--xs" data-adm="' + esc(a.id) + '">' + esc(I18N.t('common.viewDetails')) + '</button>' +
+          '<button class="btn btn--outline btn--xs" data-admok="' + esc(a.id) + '">' + esc(I18N.t('admin.markReviewed')) + '</button>' +
+          '<button class="btn btn--danger btn--xs" data-admdel="' + esc(a.id) + '">' + esc(I18N.t('common.delete')) + '</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+
+    $$('#tb-admissions [data-adm]').forEach(function (b) {
+      b.addEventListener('click', function () { showAdmission(b.getAttribute('data-adm')); });
+    });
+    $$('#tb-admissions [data-admok]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        Store.update('admissions', b.getAttribute('data-admok'), { reviewed: true, status: 'reviewed' });
+        App.toast(I18N.t('common.saved'), 'success');
+      });
+    });
+    $$('#tb-admissions [data-admdel]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm(I18N.t('admin.confirmDelete'))) return;
+        Store.remove('admissions', b.getAttribute('data-admdel'));
+      });
+    });
+  }
+
+  var dm = $('#detailModal');
+  function showAdmission(id) {
+    var a = Store.get('admissions', id);
+    if (!a) return;
+    var rows = [
+      [I18N.t('adm.refNo'), a.ref],
+      [I18N.t('adm.studentName'), a.studentName],
+      [I18N.t('adm.dob'), Store.formatDate(a.dob, L())],
+      [I18N.t('adm.applyClass'), a.className],
+      [I18N.t('adm.bloodGroup'), a.bloodGroup],
+      [I18N.t('adm.guardianName'), a.guardianName],
+      [I18N.t('adm.relation'), a.relation],
+      [I18N.t('adm.cnic'), a.cnic],
+      [I18N.t('adm.contactPhone'), a.phone],
+      [I18N.t('common.email'), a.email],
+      [I18N.t('adm.homeAddress'), a.address],
+      [I18N.t('adm.prevSchool'), a.prevSchool],
+      [I18N.t('adm.prevClass'), a.prevClass],
+      [I18N.t('adm.notes'), a.notes],
+      [I18N.t('common.date'), Store.formatDate(a.submittedAt, L())]
+    ];
+    $('#dmTitle').textContent = I18N.t('admin.pendingAdmissions');
+    $('#dmBody').innerHTML = '<div class="table-wrap"><table class="data" style="min-width:0"><tbody>' +
+      rows.map(function (r) {
+        return '<tr><th style="width:38%">' + esc(r[0]) + '</th><td>' + esc(r[1] || '—') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+    dm.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDm() { dm.classList.remove('is-open'); document.body.style.overflow = ''; }
+  $('#dmClose').addEventListener('click', closeDm);
+  $('#dmOk').addEventListener('click', closeDm);
+  $('#dmPrint').addEventListener('click', function () { window.print(); });
+  dm.addEventListener('click', function (e) { if (e.target === dm) closeDm(); });
+
+  /* ------------------------------------------------------- messages */
+  function paintMessages() {
+    var list = Store.all('messages');
+    $('#empty-messages').classList.toggle('hide', list.length > 0);
+    $('#msgList').innerHTML = list.map(function (m) {
+      return '<article class="card"><div class="card__body">' +
+        '<div class="between">' +
+          '<div><b>' + esc(m.name) + '</b> <span class="muted small">· ' + esc(m.phone || m.email || '') + '</span></div>' +
+          '<span class="badge ' + (m.read ? 'badge--ok' : 'badge--warn') + '">' + esc(Store.timeAgo(m.createdAt, L())) + '</span>' +
+        '</div>' +
+        '<h4 class="mt-2">' + esc(m.subject) + '</h4>' +
+        '<p class="small muted mt-1" style="white-space:pre-wrap">' + esc(m.message) + '</p>' +
+        '<div class="row mt-2">' +
+          (m.read ? '' : '<button class="btn btn--outline btn--xs" data-mread="' + esc(m.id) + '">Mark read</button>') +
+          '<button class="btn btn--danger btn--xs" data-mdel="' + esc(m.id) + '">' + esc(I18N.t('common.delete')) + '</button>' +
+        '</div>' +
+      '</div></article>';
+    }).join('');
+
+    $$('#msgList [data-mread]').forEach(function (b) {
+      b.addEventListener('click', function () { Store.update('messages', b.getAttribute('data-mread'), { read: true }); });
+    });
+    $$('#msgList [data-mdel]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm(I18N.t('admin.confirmDelete'))) return;
+        Store.remove('messages', b.getAttribute('data-mdel'));
+      });
+    });
+  }
+
+  /* ------------------------------------------------------- gallery */
+  var upCat = $('#upCat');
+  function paintGallery() {
+    upCat.innerHTML = CAT_OPTS.map(function (c) {
+      return '<option value="' + c + '">' + esc(I18N.t('gallery.cat.' + c, c)) + '</option>';
+    }).join('');
+
+    var items = Store.all('gallery');
+    $('#empty-gallery').classList.toggle('hide', items.length > 0);
+    $('#thumbGrid').innerHTML = items.map(function (g) {
+      return '<figure class="thumb">' +
+        '<img src="' + esc(g.src) + '" alt="' + esc(g.title) + '" loading="lazy">' +
+        '<figcaption class="thumb__body">' +
+          '<p>' + esc(g.title || '—') + '</p>' +
+          '<div class="row" style="gap:.3rem">' +
+            '<span class="badge">' + esc(I18N.t('gallery.cat.' + (g.category || 'Other'), g.category || 'Other')) + '</span>' +
+            '<button class="btn btn--ghost btn--xs" data-gedit="' + esc(g.id) + '">' + esc(I18N.t('common.edit')) + '</button>' +
+            '<button class="btn btn--danger btn--xs" data-gdel="' + esc(g.id) + '">' + esc(I18N.t('common.delete')) + '</button>' +
+          '</div>' +
+        '</figcaption>' +
+      '</figure>';
+    }).join('');
+
+    $$('#thumbGrid [data-gdel]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!confirm(I18N.t('admin.confirmDelete'))) return;
+        Store.remove('gallery', b.getAttribute('data-gdel'));
+        App.toast(I18N.t('common.deleted'), 'success');
+      });
+    });
+    $$('#thumbGrid [data-gedit]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var g = Store.get('gallery', b.getAttribute('data-gedit'));
+        var t = prompt(I18N.t('admin.photoTitle'), g.title || '');
+        if (t === null) return;
+        Store.update('gallery', g.id, { title: t });
+        App.toast(I18N.t('common.saved'), 'success');
+      });
+    });
+  }
+
+  /* upload */
+  var drop = $('#drop'), fileInput = $('#fileInput');
+  drop.addEventListener('click', function () { fileInput.click(); });
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('is-over'); });
+  });
+  drop.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function () { handleFiles(fileInput.files); fileInput.value = ''; });
+
+  function handleFiles(files) {
+    var arr = Array.prototype.slice.call(files).filter(function (f) { return /^image\//.test(f.type); });
+    if (!arr.length) return;
+    var cat = upCat.value || 'Other';
+    var baseTitle = $('#upTitle').value.trim();
+    var done = 0, failed = 0;
+    arr.forEach(function (f, i) {
+      Store.readFileAsDataURL(f, 900).then(function (dataUrl) {
+        var title = baseTitle ? (arr.length > 1 ? baseTitle + ' ' + (i + 1) : baseTitle) : f.name.replace(/\.[^.]+$/, '');
+        Store.add('gallery', { title: title, titleUr: '', category: cat, src: dataUrl, date: Store.todayISO() });
+        done++;
+        if (done + failed === arr.length) finish();
+      }).catch(function () {
+        failed++;
+        if (done + failed === arr.length) finish();
+      });
+    });
+    function finish() {
+      if (done) App.toast(done + ' ' + I18N.t('admin.uploaded'), 'success');
+      if (failed) App.toast(failed + ' image(s) skipped — max 900 KB each.', 'error');
+      $('#upTitle').value = '';
+      refreshAll();
+    }
+  }
+
+  /* ------------------------------------------------------- settings */
+  var SETTINGS_FIELDS = [
+    { key: 'schoolName', label: 'School name (English)' },
+    { key: 'schoolNameUr', label: 'اسکول کا نام (اردو)' },
+    { key: 'tagline', label: 'Tagline (English)' },
+    { key: 'taglineUr', label: 'ٹیگ لائن (اردو)' },
+    { key: 'established', label: 'Established year' },
+    { key: 'principalName', label: 'Headmistress name (English)' },
+    { key: 'principalNameUr', label: 'ہیڈ مسٹریس کا نام (اردو)' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'email', label: 'Email' },
+    { key: 'officeHours', label: 'Office hours (English)' },
+    { key: 'officeHoursUr', label: 'دفتر کے اوقات (اردو)' },
+    { key: 'motto', label: 'Motto (English)' },
+    { key: 'mottoUr', label: 'شعار (اردو)' },
+    { key: 'address', label: 'Address (English)', full: true },
+    { key: 'addressUr', label: 'پتہ (اردو)', full: true },
+    { key: 'aboutShort', label: 'Short introduction (English)', type: 'textarea' },
+    { key: 'aboutShortUr', label: 'مختصر تعارف (اردو)', type: 'textarea' },
+    { key: 'aboutLong', label: 'Full introduction (English)', type: 'textarea' },
+    { key: 'aboutLongUr', label: 'مکمل تعارف (اردو)', type: 'textarea' }
+  ];
+
+  function paintSettings() {
+    var s = Store.settings();
+    $('#settingsFields').innerHTML = SETTINGS_FIELDS.map(function (f) {
+      var id = 'st_' + f.key;
+      var full = f.full || f.type === 'textarea';
+      var input = f.type === 'textarea'
+        ? '<textarea class="textarea" id="' + id + '" data-skey="' + f.key + '">' + esc(s[f.key] || '') + '</textarea>'
+        : '<input class="input" id="' + id + '" data-skey="' + f.key + '" value="' + esc(s[f.key] || '') + '">';
+      return '<div class="field' + (full ? ' field--full' : '') + '"><label for="' + id + '">' + esc(f.label) + '</label>' + input + '</div>';
+    }).join('');
+    var lp = $('#logoPreview');
+    lp.innerHTML = s.logoData ? '<img src="' + esc(s.logoData) + '" alt="" style="width:100%;height:100%;object-fit:cover">' : 'G';
+    $('#heroPreview').src = s.heroImage || 'assets/images/school-gate.jpeg';
+  }
+
+  $('#settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var patch = {};
+    $$('#settingsFields [data-skey]').forEach(function (el) { patch[el.getAttribute('data-skey')] = el.value; });
+    Store.saveSettings(patch);
+    App.toast(I18N.t('admin.settingsSaved'), 'success');
+    refreshAll();
+  });
+
+  $('#logoFile').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) return;
+    Store.readFileAsDataURL(f, 900).then(function (d) {
+      Store.saveSettings({ logoData: d });
+      App.toast(I18N.t('common.saved'), 'success');
+      paintSettings();
+      var sl = $('#sideLogo'); sl.innerHTML = '<img src="' + d + '" alt="">';
+    }).catch(function () { App.toast('Logo too large (max 900 KB).', 'error'); });
+  });
+  $('#logoRemove').addEventListener('click', function () {
+    Store.saveSettings({ logoData: '' });
+    paintSettings();
+    $('#sideLogo').textContent = 'G';
+  });
+
+  $('#heroFile').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) return;
+    Store.readFileAsDataURL(f, 900).then(function (d) {
+      Store.saveSettings({ heroImage: d });
+      App.toast(I18N.t('common.saved'), 'success');
+      paintSettings();
+    }).catch(function () { App.toast('Photo too large (max 900 KB).', 'error'); });
+    this.value = '';
+  });
+  $('#heroRemove').addEventListener('click', function () {
+    Store.saveSettings({ heroImage: '' });
+    paintSettings();
+    App.toast(I18N.t('common.saved'), 'success');
+  });
+
+  $('#authForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var u = $('#nUser').value.trim(), p1 = $('#nPass').value, p2 = $('#nPass2').value;
+    if (!u || !p1) { App.toast(I18N.t('common.requiredField'), 'error'); return; }
+    if (p1 !== p2) { App.toast(I18N.t('admin.passwordMismatch'), 'error'); return; }
+    Store.changeCredentials(u, p1);
+    $('#authForm').reset();
+    App.toast(I18N.t('admin.settingsSaved'), 'success');
+  });
+
+  $('#exportBtn').addEventListener('click', function () {
+    Store.download('gges36-bhakkar-backup-' + Store.todayISO() + '.json', Store.export());
+    App.toast(I18N.t('common.download'), 'success');
+  });
+  $('#importBtn').addEventListener('click', function () { $('#importFile').click(); });
+  $('#importFile').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        Store.import(fr.result);
+        App.toast(I18N.t('common.saved'), 'success');
+        refreshAll();
+      } catch (err) { App.toast('Invalid backup file', 'error'); }
+    };
+    fr.readAsText(f);
+    this.value = '';
+  });
+  $('#resetBtn').addEventListener('click', function () {
+    if (!confirm(I18N.t('admin.resetConfirm'))) return;
+    Store.reset();
+    App.toast(I18N.t('admin.settingsSaved'), 'success');
+    refreshAll();
+  });
+
+  /* ------------------------------------------------------- dashboard */
+  function paintDashboard() {
+    var s = Store.settings();
+    var admissions = Store.all('admissions');
+    var pending = admissions.filter(function (a) { return !a.reviewed; }).length;
+
+    var kpis = [
+      { v: Store.count('students'), l: I18N.t('admin.totalStudents'), i: '🎒' },
+      { v: Store.count('teachers'), l: I18N.t('admin.totalTeachers'), i: '👩‍🏫' },
+      { v: Store.count('notices'), l: I18N.t('admin.totalNotices'), i: '📢' },
+      { v: Store.count('gallery'), l: I18N.t('admin.totalPhotos'), i: '🖼️' },
+      { v: admissions.length, l: I18N.t('admin.pendingAdmissions'), i: '📋' },
+      { v: pending, l: I18N.t('admin.newStatus'), i: '🔔' },
+      { v: Store.count('messages'), l: I18N.t('admin.navMessages'), i: '✉️' },
+      { v: Store.count('results'), l: I18N.t('admin.navResults'), i: '📝' }
+    ];
+    $('#kpis').innerHTML = kpis.map(function (k) {
+      return '<div class="kpi__card"><div style="font-size:1.2rem">' + k.i + '</div><b>' + k.v + '</b><span>' + esc(k.l) + '</span></div>';
+    }).join('');
+
+    var acts = Store.all('activity').slice(0, 7);
+    $('#activityList').innerHTML = acts.length ? acts.map(function (a) {
+      return '<div class="tile"><span class="tile__icon" style="width:34px;height:34px;flex:0 0 34px;font-size:.85rem">•</span>' +
+        '<div><h4 style="font-size:.88rem">' + esc(a.action) + '</h4>' +
+        '<p class="tiny">' + esc(a.detail || '') + ' · ' + esc(Store.timeAgo(a.at, L())) + '</p></div></div>';
+    }).join('') : '<p class="muted small">' + esc(I18N.t('admin.noRecords')) + '</p>';
+
+    $('#recentAdmissions').innerHTML = admissions.length ? admissions.slice(0, 5).map(function (a) {
+      return '<div class="between" style="border-bottom:1px solid var(--line);padding-bottom:.6rem">' +
+        '<div><b class="small">' + esc(a.studentName) + '</b><p class="tiny muted">' + esc(a.ref) + ' · ' + esc(a.className) + '</p></div>' +
+        '<span class="badge ' + (a.reviewed ? 'badge--ok' : 'badge--warn') + '">' + esc(a.reviewed ? I18N.t('admin.reviewed') : I18N.t('admin.newStatus')) + '</span>' +
+      '</div>';
+    }).join('') : '<p class="muted small">' + esc(I18N.t('admin.noRecords')) + '</p>';
+
+    $('#lastUpdated').textContent = I18N.t('admin.lastUpdated') + ': ' +
+      (Store.timeAgo(s.updatedAt || Store.nowISO(), L()));
+  }
+
+  function paintActivityFull() {
+    var acts = Store.all('activity');
+    $('#activityFull').innerHTML = acts.length ? acts.map(function (a) {
+      return '<div class="between" style="border-bottom:1px solid var(--line);padding-bottom:.55rem">' +
+        '<div><b class="small">' + esc(a.action) + '</b><p class="tiny muted">' + esc(a.detail || '') + '</p></div>' +
+        '<span class="badge">' + esc(Store.timeAgo(a.at, L())) + '</span>' +
+      '</div>';
+    }).join('') : '<p class="muted small">' + esc(I18N.t('admin.noRecords')) + '</p>';
+  }
+
+  function paintStorage() {
+    var bytes = 0;
+    try { bytes = new Blob([Store.export()]).size; } catch (e) {}
+    $('#storageUsed').textContent = (bytes / 1024).toFixed(1) + ' KB';
+  }
+
+  /* ------------------------------------------------------- CSV */
+  function toCsv(name) {
+    var rows = Store.all(name);
+    if (!rows.length) return '';
+    var keys = Array.from(rows.reduce(function (set, r) { Object.keys(r).forEach(function (k) { if (!/^(id|src|photo|logoData)$/.test(k)) set.add(k); }); return set; }, new Set()));
+    function cell(v) { return '"' + String(v === undefined || v === null ? '' : v).replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"'; }
+    return keys.join(',') + '\r\n' + rows.map(function (r) { return keys.map(function (k) { return cell(r[k]); }).join(','); }).join('\r\n');
+  }
+
+  $$('[data-csv]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var name = b.getAttribute('data-csv');
+      var csv = toCsv(name);
+      if (!csv) { App.toast(I18N.t('admin.noRecords'), 'warn'); return; }
+      Store.download('gges36-' + name + '-' + Store.todayISO() + '.csv', csv);
+      App.toast(I18N.t('common.download'), 'success');
+    });
+  });
+
+  /* ------------------------------------------------------- refresh */
+  function refreshAll() {
+    paintDashboard();
+    paintTable('notices');
+    paintTable('students');
+    paintTable('teachers');
+    paintTable('results');
+    paintAdmissions();
+    paintMessages();
+    paintGallery();
+    paintActivityFull();
+    paintStorage();
+  }
+
+  /* search inputs */
+  $$('[data-search]').forEach(function (inp) {
+    inp.addEventListener('input', App.debounce(function () {
+      var name = inp.getAttribute('data-search');
+      searches[name] = inp.value.trim();
+      if (name === 'admissions') paintAdmissions();
+      else paintTable(name);
+    }, 170));
+  });
+
+  /* new buttons */
+  $$('[data-new]').forEach(function (b) {
+    b.addEventListener('click', function () { openForm(b.getAttribute('data-new'), null); });
+  });
+
+  /* theme + lang in admin */
+  $('#appLang').addEventListener('click', function () { I18N.toggle(); });
+  $('#loginLang').addEventListener('click', function () { I18N.toggle(); });
+  $('#appTheme').addEventListener('click', function () {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    Store.setTheme(next);
+  });
+
+  /* realtime: repaint on any change from other tabs / views */
+  Store.subscribe('*', function () {
+    if ($('#adminApp').classList.contains('hide')) return;
+    paintDashboard();
+    if (SCHEMAS[currentView]) paintTable(currentView);
+    if (currentView === 'admissions') paintAdmissions();
+    if (currentView === 'messages') paintMessages();
+    if (currentView === 'gallery') paintGallery();
+    if (currentView === 'activity') paintActivityFull();
+    paintStorage();
+  });
+
+  document.addEventListener('gges:langchange', function () {
+    paintNav();
+    setView(currentView);
+    if (!$('#adminApp').classList.contains('hide')) refreshAll();
+  });
+
+  /* ------------------------------------------------------- boot */
+  document.documentElement.setAttribute('data-theme', Store.getTheme());
+  I18N.setLang(Store.getLang());
+  App.bindSettings(document);
+  paintNav();
+  paintSettings();
+  if (Store.isAdmin()) showApp(); else showLogin();
+})();
+</script>
+</body>
+</html>

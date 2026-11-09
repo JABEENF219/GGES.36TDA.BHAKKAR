@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Us — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="About GGES 36 TDA Bhakkar: mission, vision, core values, facilities, school information and frequently asked questions.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.about"></span>
+      </nav>
+      <h1 data-i18n="about.title"></h1>
+      <p data-i18n="about.intro"></p>
+    </div>
+  </section>
+
+  <!-- intro -->
+  <section class="section">
+    <div class="shell grid g-2" style="gap:2.2rem;align-items:center">
+      <div class="reveal">
+        <span class="eyebrow" data-i18n="about.eyebrow"></span>
+        <h2 class="mt-2 mb-2" data-i18n="about.title"></h2>
+        <p class="lead" id="aboutLong"></p>
+        <div class="stats mt-3">
+          <div class="stat"><b data-count="640" data-count-suffix="+">0</b><span data-i18n="home.statStudents"></span></div>
+          <div class="stat"><b data-count="18">0</b><span data-i18n="home.statTeachers"></span></div>
+          <div class="stat"><b data-count="40" data-count-suffix="+">0</b><span>Years of Service</span></div>
+          <div class="stat"><b data-count="96" data-count-suffix="%">0</b><span data-i18n="home.statPass"></span></div>
+        </div>
+      </div>
+      <figure class="card reveal" data-delay="100" style="margin:0">
+        <img class="card__media" style="aspect-ratio:4/3"
+             src="assets/images/school-gate.jpeg"
+             alt="GGES 36 TDA Bhakkar campus" loading="lazy">
+        <figcaption class="card__body"><h3 data-setting="schoolName"></h3><p class="muted small" data-setting="tagline"></p></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- mission / vision -->
+  <section class="section section--alt">
+    <div class="shell grid g-2">
+      <article class="card reveal">
+        <div class="card__body">
+          <span class="tile__icon" style="background:var(--gold-100);color:var(--gold-600)">🎯</span>
+          <h3 class="mt-2" data-i18n="about.missionTitle"></h3>
+          <p class="muted mt-2" data-i18n="about.missionText"></p>
+        </div>
+      </article>
+      <article class="card reveal" data-delay="100">
+        <div class="card__body">
+          <span class="tile__icon">🔭</span>
+          <h3 class="mt-2" data-i18n="about.visionTitle"></h3>
+          <p class="muted mt-2" data-i18n="about.visionText"></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- values -->
+  <section class="section">
+    <div class="shell">
+      <div class="section-head center reveal">
+        <span class="eyebrow" data-i18n="about.valuesTitle"></span>
+        <h2 class="mt-2" data-i18n="about.valuesTitle"></h2>
+        <span class="title-rule"></span>
+      </div>
+      <div class="grid g-4">
+        <article class="card reveal"><div class="card__body center">
+          <span class="tile__icon" style="margin-inline:auto">🧭</span>
+          <h3 class="mt-2" data-i18n="about.v1"></h3><p class="muted small" data-i18n="about.v1t"></p>
+        </div></article>
+        <article class="card reveal" data-delay="80"><div class="card__body center">
+          <span class="tile__icon" style="margin-inline:auto">⭐</span>
+          <h3 class="mt-2" data-i18n="about.v2"></h3><p class="muted small" data-i18n="about.v2t"></p>
+        </div></article>
+        <article class="card reveal" data-delay="160"><div class="card__body center">
+          <span class="tile__icon" style="margin-inline:auto">⚖️</span>
+          <h3 class="mt-2" data-i18n="about.v3"></h3><p class="muted small" data-i18n="about.v3t"></p>
+        </div></article>
+        <article class="card reveal" data-delay="240"><div class="card__body center">
+          <span class="tile__icon" style="margin-inline:auto">🤲</span>
+          <h3 class="mt-2" data-i18n="about.v4"></h3><p class="muted small" data-i18n="about.v4t"></p>
+        </div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- facilities + school info -->
+  <section class="section section--alt">
+    <div class="shell grid g-2" style="gap:2.2rem;align-items:start">
+      <div class="reveal">
+        <h2 class="mb-3" data-i18n="about.facilitiesTitle"></h2>
+        <ul class="grid" style="gap:.6rem" id="facilityList"></ul>
+      </div>
+      <div class="panel reveal" data-delay="100">
+        <h3 class="mb-3" data-i18n="about.schoolInfo"></h3>
+        <div class="table-wrap">
+          <table class="data" style="min-width:0">
+            <tbody>
+              <tr><th style="width:42%"><span data-i18n="about.established"></span></th><td class="cell-strong" data-setting="established"></td></tr>
+              <tr><th><span data-i18n="about.affiliation"></span></th><td data-i18n="about.affiliationValue"></td></tr>
+              <tr><th><span data-i18n="about.medium"></span></th><td data-i18n="about.mediumValue"></td></tr>
+              <tr><th><span data-i18n="about.grades"></span></th><td data-i18n="about.gradesValue"></td></tr>
+              <tr><th><span data-i18n="about.principal"></span></th><td class="cell-strong" data-setting="principalName"></td></tr>
+              <tr><th><span data-i18n="common.officeHours"></span></th><td data-setting="officeHours"></td></tr>
+              <tr><th><span data-i18n="common.address"></span></th><td data-setting="address"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="shell" style="max-width:60rem">
+      <div class="section-head center reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2 class="mt-2" data-i18n="about.faq"></h2>
+        <span class="title-rule"></span>
+      </div>
+      <div class="reveal" id="faqBox"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--tight">
+    <div class="shell">
+      <div class="panel center reveal">
+        <h2 data-i18n="home.ctaTitle"></h2>
+        <p class="mt-2 muted" data-i18n="home.ctaText"></p>
+        <div class="row mt-3" style="justify-content:center">
+          <a class="btn btn--primary" href="admissions.html" data-i18n="home.ctaButton"></a>
+          <a class="btn btn--outline" href="gallery.html" data-i18n="nav.gallery"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, esc = App.esc;
+  App.init({ active: 'about' });
+
+  var FACILITIES = ['about.fac1','about.fac2','about.fac3','about.fac4','about.fac5','about.fac6','about.fac7','about.fac8'];
+  var FAQ = [['about.q1','about.a1'],['about.q2','about.a2'],['about.q3','about.a3'],['about.q4','about.a4']];
+
+  function paint() {
+    var lang = I18N.lang();
+    var s = Store.settings();
+    $('#aboutLong').textContent = (lang === 'ur' && s.aboutLongUr) ? s.aboutLongUr : (s.aboutLong || '');
+
+    $('#facilityList').innerHTML = FACILITIES.map(function (k) {
+      return '<li class="card card--flat" style="border-style:dashed"><div class="card__body" style="padding:.8rem 1rem;display:flex;gap:.7rem;align-items:center">' +
+        '<span style="color:var(--green-600);font-weight:800">✓</span><span style="font-size:.92rem">' + esc(I18N.t(k)) + '</span></div></li>';
+    }).join('');
+
+    $('#faqBox').innerHTML = FAQ.map(function (pair, i) {
+      return '<details class="acc"' + (i === 0 ? ' open' : '') + '>' +
+        '<summary>' + esc(I18N.t(pair[0])) + '</summary>' +
+        '<div class="acc__body">' + esc(I18N.t(pair[1])) + '</div>' +
+      '</details>';
+    }).join('');
+  }
+
+  paint();
+  document.addEventListener('gges:langchange', paint);
+  Store.subscribe('settings', paint);
+})();
+</script>
+</body>
+</html>
