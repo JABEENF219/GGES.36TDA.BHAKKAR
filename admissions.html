@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admissions — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="Online admission form for GGES 36 TDA Bhakkar. Apply for Nursery to Class 8 — free education for girls in District Bhakkar.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.admissions"></span>
+      </nav>
+      <h1 data-i18n="adm.title"></h1>
+      <p data-i18n="adm.text"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell grid" style="grid-template-columns:1.6fr .9fr;gap:2rem;align-items:start">
+
+      <!-- ------------------------- FORM ------------------------- -->
+      <div>
+        <form class="panel" id="admForm" novalidate>
+          <div class="between mb-3">
+            <h2 data-i18n="adm.title"></h2>
+            <span class="badge badge--gold" data-i18n="adm.deadline"></span>
+          </div>
+
+          <!-- step 1 -->
+          <h3 class="mb-2" style="display:flex;gap:.6rem;align-items:center">
+            <span class="badge badge--ok">1</span><span data-i18n="adm.step1"></span>
+          </h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="aStudent" data-i18n="adm.studentName"></label>
+              <input class="input" id="aStudent" name="studentName" required data-i18n-ph="adm.studentNamePh">
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+            <div class="field">
+              <label for="aDob" data-i18n="adm.dob"></label>
+              <input class="input" id="aDob" name="dob" type="date" required>
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+            <div class="field">
+              <label for="aClass" data-i18n="adm.applyClass"></label>
+              <select class="select" id="aClass" name="className" required></select>
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+            <div class="field">
+              <label for="aBlood" data-i18n="adm.bloodGroup"></label>
+              <select class="select" id="aBlood" name="bloodGroup"></select>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- step 2 -->
+          <h3 class="mb-2" style="display:flex;gap:.6rem;align-items:center">
+            <span class="badge badge--ok">2</span><span data-i18n="adm.step2"></span>
+          </h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="aGuardian" data-i18n="adm.guardianName"></label>
+              <input class="input" id="aGuardian" name="guardianName" required>
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+            <div class="field">
+              <label for="aRelation" data-i18n="adm.relation"></label>
+              <select class="select" id="aRelation" name="relation" required></select>
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+            <div class="field">
+              <label for="aCnic" data-i18n="adm.cnic"></label>
+              <input class="input" id="aCnic" name="cnic" inputmode="numeric" data-i18n-ph="adm.cnicPh">
+            </div>
+            <div class="field">
+              <label for="aPhone" data-i18n="adm.contactPhone"></label>
+              <input class="input" id="aPhone" name="phone" inputmode="tel" required data-i18n-ph="adm.contactPhonePh">
+              <span class="err" data-i18n="common.invalidPhone"></span>
+            </div>
+            <div class="field field--full">
+              <label for="aEmail" data-i18n="common.email"></label>
+              <input class="input" id="aEmail" name="email" type="email" data-i18n-ph="adm.emailPh">
+              <span class="err" data-i18n="common.invalidEmail"></span>
+            </div>
+            <div class="field field--full">
+              <label for="aAddress" data-i18n="adm.homeAddress"></label>
+              <input class="input" id="aAddress" name="address" required data-i18n-ph="adm.homeAddressPh">
+              <span class="err" data-i18n="common.requiredField"></span>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- step 3 -->
+          <h3 class="mb-2" style="display:flex;gap:.6rem;align-items:center">
+            <span class="badge badge--ok">3</span><span data-i18n="adm.step3"></span>
+          </h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="aPrev" data-i18n="adm.prevSchool"></label>
+              <input class="input" id="aPrev" name="prevSchool" data-i18n-ph="adm.prevSchoolPh">
+            </div>
+            <div class="field">
+              <label for="aPrevClass" data-i18n="adm.prevClass"></label>
+              <input class="input" id="aPrevClass" name="prevClass">
+            </div>
+            <div class="field field--full">
+              <label for="aNotes" data-i18n="adm.notes"></label>
+              <textarea class="textarea" id="aNotes" name="notes" data-i18n-ph="adm.notesPh"></textarea>
+            </div>
+          </div>
+
+          <label class="row mt-3" style="align-items:flex-start;gap:.6rem;cursor:pointer">
+            <input type="checkbox" id="aConsent" required style="width:18px;height:18px;margin-top:.25rem;accent-color:var(--green-600)">
+            <span class="small" data-i18n="adm.consent"></span>
+          </label>
+          <span class="err" id="consentErr" style="display:none;font-size:.78rem;color:var(--danger);font-weight:600" data-i18n="common.requiredField"></span>
+
+          <div class="row mt-3">
+            <button class="btn btn--primary" type="submit" id="admSubmit" data-i18n="adm.submit"></button>
+            <button class="btn btn--ghost" type="reset" data-i18n="common.cancel"></button>
+            <span class="spacer"></span>
+            <span class="badge badge--live" data-i18n="common.live"></span>
+          </div>
+        </form>
+
+        <!-- ------------------------- SUCCESS ------------------------- -->
+        <div class="panel hide" id="successPanel" style="text-align:center">
+          <div class="empty__icon" style="font-size:3rem">🎉</div>
+          <h2 data-i18n="adm.successTitle"></h2>
+          <p class="muted mt-2" data-i18n="adm.successText"></p>
+          <div class="panel mt-3" style="background:var(--green-50);border-color:var(--green-400)">
+            <p class="small muted" data-i18n="adm.refNo"></p>
+            <b id="refNo" style="font-size:1.5rem;letter-spacing:.06em;color:var(--green-700)">—</b>
+          </div>
+          <div class="row mt-3" style="justify-content:center">
+            <button class="btn btn--primary" id="printForm" data-i18n="common.print"></button>
+            <button class="btn btn--outline" id="againBtn" data-i18n="adm.another"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ------------------------- SIDEBAR ------------------------- -->
+      <aside class="stack">
+        <div class="panel">
+          <h3 data-i18n="adm.documentsTitle"></h3>
+          <ul class="stack mt-2" style="font-size:.9rem;color:var(--ink-2)">
+            <li data-i18n="adm.doc1"></li>
+            <li data-i18n="adm.doc2"></li>
+            <li data-i18n="adm.doc3"></li>
+            <li data-i18n="adm.doc4"></li>
+          </ul>
+        </div>
+        <div class="panel" style="background:linear-gradient(150deg,var(--green-700),var(--green-900));border:0;color:#fff">
+          <h3 style="color:#fff" data-i18n="adm.whyTitle"></h3>
+          <ul class="stack mt-2" style="font-size:.9rem;color:#c9e2d8">
+            <li data-i18n="adm.why1"></li>
+            <li data-i18n="adm.why2"></li>
+            <li data-i18n="adm.why3"></li>
+            <li data-i18n="adm.why4"></li>
+            <li data-i18n="adm.why5"></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3 data-i18n="common.contactUs"></h3>
+          <div class="stack mt-2">
+            <div class="tile"><span class="tile__icon">📍</span><div><p data-setting="address"></p></div></div>
+            <div class="tile"><span class="tile__icon">📞</span><div><p><a id="admPhone" href="#"></a></p></div></div>
+            <div class="tile"><span class="tile__icon">🕗</span><div><p data-setting="officeHours"></p></div></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, esc = App.esc;
+  App.init({ active: 'admissions' });
+
+  var CLASSES = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8'];
+  var BLOOD = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  function fillSelects() {
+    var c = $('#aClass');
+    c.innerHTML = '<option value="" disabled selected hidden>' + esc(I18N.t('adm.selectClass')) + '</option>' +
+      CLASSES.map(function (x) { return '<option value="' + esc(x) + '">' + esc(I18N.lang() === 'ur' ? 'جماعت ' + x : 'Class ' + x) + '</option>'; }).join('');
+
+    $('#aBlood').innerHTML = '<option value="" selected hidden>' + esc(I18N.t('adm.selectBlood')) + '</option>' +
+      BLOOD.map(function (x) { return '<option value="' + x + '">' + x + '</option>'; }).join('');
+
+    $('#aRelation').innerHTML = '<option value="" disabled selected hidden>' + esc(I18N.t('adm.selectRelation')) + '</option>' +
+      [['father', 'adm.father'], ['mother', 'adm.mother'], ['guardian', 'adm.guardian']].map(function (r) {
+        return '<option value="' + r[0] + '">' + esc(I18N.t(r[1])) + '</option>';
+      }).join('');
+  }
+
+  function setError(sel, isError) {
+    var f = $(sel).closest('.field');
+    if (f) f.classList.toggle('has-error', !!isError);
+  }
+
+  var RULES = [
+    { sel: '#aStudent', test: function (v) { return v.length >= 3; } },
+    { sel: '#aDob', test: function (v) { return !!v; } },
+    { sel: '#aClass', test: function (v) { return !!v; } },
+    { sel: '#aGuardian', test: function (v) { return v.length >= 3; } },
+    { sel: '#aRelation', test: function (v) { return !!v; } },
+    { sel: '#aPhone', test: function (v) { return /^[0-9+\-\s()]{10,17}$/.test(v); } },
+    { sel: '#aAddress', test: function (v) { return v.length >= 4; } }
+  ];
+
+  function validate() {
+    var ok = true;
+    RULES.forEach(function (r) {
+      var good = r.test($(r.sel).value.trim());
+      setError(r.sel, !good);
+      if (!good) ok = false;
+    });
+    var email = $('#aEmail').value.trim();
+    var emailBad = !!email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    setError('#aEmail', emailBad);
+    if (emailBad) ok = false;
+
+    var consent = $('#aConsent').checked;
+    $('#consentErr').style.display = consent ? 'none' : '';
+    if (!consent) ok = false;
+    return ok;
+  }
+
+  ['input', 'change'].forEach(function (ev) {
+    $('#admForm').addEventListener(ev, function (e) {
+      var f = e.target.closest('.field');
+      if (f && f.classList.contains('has-error')) {
+        var r = RULES.filter(function (x) { return $(x.sel) === e.target; })[0];
+        if (r && r.test(e.target.value.trim())) f.classList.remove('has-error');
+      }
+    });
+  });
+
+  function makeRef() {
+    var n = Math.floor(1000 + Math.random() * 9000);
+    return 'GGES-' + new Date().getFullYear() + '-' + n;
+  }
+
+  $('#admForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) {
+      App.toast(I18N.t('common.requiredField'), 'error');
+      var firstBad = $('#admForm .has-error .input, #admForm .has-error .select');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+    var btn = $('#admSubmit');
+    btn.disabled = true;
+    btn.textContent = I18N.t('common.submitting');
+
+    var ref = makeRef();
+    var payload = {
+      ref: ref,
+      studentName: $('#aStudent').value.trim(),
+      dob: $('#aDob').value,
+      className: $('#aClass').value,
+      bloodGroup: $('#aBlood').value,
+      guardianName: $('#aGuardian').value.trim(),
+      relation: $('#aRelation').value,
+      cnic: $('#aCnic').value.trim(),
+      phone: $('#aPhone').value.trim(),
+      email: $('#aEmail').value.trim(),
+      address: $('#aAddress').value.trim(),
+      prevSchool: $('#aPrev').value.trim(),
+      prevClass: $('#aPrevClass').value.trim(),
+      notes: $('#aNotes').value.trim(),
+      gender: 'Female',
+      status: 'new',
+      reviewed: false,
+      submittedAt: new Date().toISOString()
+    };
+
+    setTimeout(function () {
+      try {
+        Store.add('admissions', payload);
+        $('#refNo').textContent = ref;
+        $('#admForm').classList.add('hide');
+        $('#successPanel').classList.remove('hide');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        App.toast(I18N.t('adm.successTitle'), 'success');
+      } catch (err) {
+        App.toast('Storage is full — please clear some gallery photos.', 'error');
+      }
+      btn.disabled = false;
+      btn.textContent = I18N.t('adm.submit');
+    }, 380);
+  });
+
+  $('#againBtn').addEventListener('click', function () {
+    $('#admForm').reset();
+    $('#successPanel').classList.add('hide');
+    $('#admForm').classList.remove('hide');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  $('#printForm').addEventListener('click', function () { window.print(); });
+
+  function paintLinks() {
+    var p = $('#admPhone');
+    var s = Store.settings();
+    if (p) { p.textContent = s.phone || ''; p.href = 'tel:' + String(s.phone || '').replace(/[^\d+]/g, ''); }
+  }
+
+  function paintAll() { fillSelects(); paintLinks(); }
+  paintAll();
+  document.addEventListener('gges:langchange', paintAll);
+  Store.subscribe('settings', paintLinks);
+})();
+</script>
+</body>
+</html>
