@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Students — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="Student directory of GGES 36 TDA Bhakkar. Search enrolled students by name, roll number or class.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.students"></span>
+      </nav>
+      <h1 data-i18n="students.title"></h1>
+      <p data-i18n="students.text"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell" style="max-width:80rem">
+      <div class="kpi">
+        <div class="kpi__card"><b id="kTotal">0</b><span data-i18n="students.totalEnrolled"></span></div>
+        <div class="kpi__card"><b id="kClasses">0</b><span data-i18n="home.statClasses"></span></div>
+        <div class="kpi__card"><b id="kShown">0</b><span data-i18n="common.results"></span></div>
+      </div>
+
+      <div class="panel mb-3">
+        <div class="row">
+          <div class="searchbar">
+            <input class="input" id="q" type="search" data-i18n-ph="students.searchPlaceholder" aria-label="Search students">
+          </div>
+          <select class="select" id="classFilter" style="max-width:200px"></select>
+          <span class="badge badge--live" data-i18n="common.live"></span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th data-i18n="common.rollNo"></th>
+              <th data-i18n="common.name"></th>
+              <th data-i18n="common.fatherName"></th>
+              <th data-i18n="common.class"></th>
+              <th data-i18n="common.section"></th>
+              <th data-i18n="common.status"></th>
+              <th data-i18n="common.actions"></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="empty mt-3" id="empty" style="display:none">
+        <div class="empty__icon">🎒</div>
+        <h3 data-i18n="students.empty"></h3>
+        <p class="small mt-1" data-i18n="common.noDataHint"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<!-- student modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="modal__box">
+    <div class="modal__head">
+      <h3 data-i18n="students.detailTitle"></h3>
+      <button class="icon-btn" id="mClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="mBody"></div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" id="mPrint" data-i18n="common.print"></button>
+      <button class="btn btn--primary" id="mClose2" data-i18n="common.close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, $$ = App.$$, esc = App.esc;
+  App.init({ active: 'students' });
+
+  var query = '';
+  var classSel = 'all';
+
+  function nameOf(s) { return I18N.lang() === 'ur' && s.nameUr ? s.nameUr : s.name; }
+
+  function list() {
+    var all = Store.all('students');
+    var out = all.slice();
+    if (classSel !== 'all') out = out.filter(function (s) { return String(s.className) === String(classSel); });
+    if (query) {
+      var q = query.toLowerCase();
+      out = out.filter(function (s) {
+        return [s.name, s.nameUr, s.rollNo, s.fatherName, s.className, s.section, s.address]
+          .join(' ').toLowerCase().indexOf(q) > -1;
+      });
+    }
+    return out.sort(function (a, b) {
+      var c = parseFloat(a.className) - parseFloat(b.className);
+      if (!isNaN(c) && c !== 0) return c;
+      return String(a.rollNo).localeCompare(String(b.rollNo), undefined, { numeric: true });
+    });
+  }
+
+  function paintClassFilter() {
+    var set = {};
+    Store.all('students').forEach(function (s) { set[s.className] = true; });
+    var list = Object.keys(set).sort(function (a, b) { return parseFloat(a) - parseFloat(b); });
+    var sel = $('#classFilter');
+    sel.innerHTML = '<option value="all">' + esc(I18N.t('students.allClasses')) + '</option>' +
+      list.map(function (c) {
+        return '<option value="' + esc(c) + '">' + esc(I18N.lang() === 'ur' ? 'جماعت ' + c : 'Class ' + c) + '</option>';
+      }).join('');
+    sel.value = classSel;
+  }
+
+  function paintRows() {
+    var rows = list();
+    var all = Store.all('students');
+    $('#kTotal').textContent = all.length;
+    $('#kShown').textContent = rows.length;
+    $('#kClasses').textContent = Object.keys(all.reduce(function (a, s) { a[s.className] = 1; return a; }, {})).length;
+
+    $('#empty').style.display = rows.length ? 'none' : '';
+    $('#rows').innerHTML = rows.map(function (s) {
+      return '<tr>' +
+        '<td class="cell-strong">' + esc(s.rollNo || '—') + '</td>' +
+        '<td>' + esc(nameOf(s)) + '</td>' +
+        '<td>' + esc(s.fatherName || '—') + '</td>' +
+        '<td><span class="badge badge--ok">' + esc(I18N.lang() === 'ur' ? 'جماعت ' + s.className : 'Class ' + s.className) + '</span></td>' +
+        '<td>' + esc(s.section || '—') + '</td>' +
+        '<td><span class="badge ' + (s.status === 'Inactive' ? 'badge--warn' : 'badge--info') + '">' +
+          esc(s.status === 'Inactive' ? I18N.t('common.inactive') : I18N.t('common.active')) + '</span></td>' +
+        '<td><button class="btn btn--ghost btn--xs" data-open="' + esc(s.id) + '">' + esc(I18N.t('common.viewDetails')) + '</button></td>' +
+      '</tr>';
+    }).join('');
+
+    $$('#rows [data-open]').forEach(function (b) {
+      b.addEventListener('click', function () { open(b.getAttribute('data-open')); });
+    });
+  }
+
+  function age(dob) {
+    if (!dob) return '—';
+    var d = new Date(dob); if (isNaN(d.getTime())) return '—';
+    var diff = Date.now() - d.getTime();
+    return Math.floor(diff / (365.25 * 86400000));
+  }
+
+  var modal = $('#modal');
+  function open(id) {
+    var s = Store.get('students', id);
+    if (!s) return;
+    var rows = [
+      [I18N.t('common.rollNo'), s.rollNo],
+      [I18N.t('common.name'), nameOf(s)],
+      [I18N.t('common.fatherName'), s.fatherName],
+      [I18N.t('common.class'), s.className],
+      [I18N.t('common.section'), s.section],
+      [I18N.t('adm.dob'), Store.formatDate(s.dob, I18N.lang())],
+      [I18N.t('students.age'), age(s.dob) === '—' ? '—' : age(s.dob) + ' ' + I18N.t('students.years')],
+      [I18N.t('common.address'), s.address],
+      [I18N.t('common.phone'), s.phone],
+      [I18N.t('common.status'), s.status || 'Active']
+    ];
+    $('#mBody').innerHTML =
+      '<div class="row" style="gap:1.2rem;align-items:center">' +
+        (s.photo ? '<img class="avatar avatar--lg" src="' + esc(s.photo) + '" alt="">'
+                 : '<span class="avatar avatar--lg">' + esc(Store.initials(s.name)) + '</span>') +
+        '<div><h3>' + esc(nameOf(s)) + '</h3>' +
+        '<p class="muted small">' + esc(I18N.lang() === 'ur' ? 'جماعت ' + s.className : 'Class ' + s.className) +
+          (s.section ? ' · ' + esc(s.section) : '') + '</p></div>' +
+      '</div>' +
+      '<hr class="divider">' +
+      '<div class="table-wrap"><table class="data" style="min-width:0"><tbody>' +
+        rows.map(function (r) {
+          return '<tr><th style="width:40%">' + esc(r[0]) + '</th><td>' + esc(r[1] || '—') + '</td></tr>';
+        }).join('') +
+      '</tbody></table></div>';
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() { modal.classList.remove('is-open'); document.body.style.overflow = ''; }
+  $('#mClose').addEventListener('click', close);
+  $('#mClose2').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  $('#mPrint').addEventListener('click', function () { window.print(); });
+
+  $('#q').addEventListener('input', App.debounce(function (e) { query = e.target.value.trim(); paintRows(); }, 160));
+  $('#classFilter').addEventListener('change', function (e) { classSel = e.target.value; paintRows(); });
+
+  function paintAll() { paintClassFilter(); paintRows(); }
+  paintAll();
+  Store.subscribe('students', paintAll);
+  document.addEventListener('gges:langchange', paintAll);
+})();
+</script>
+</body>
+</html>

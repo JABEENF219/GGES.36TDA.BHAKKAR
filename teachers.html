@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Teachers — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="Meet the teaching staff of GGES 36 TDA Bhakkar — qualification, subject and experience of our faculty.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.teachers"></span>
+      </nav>
+      <h1 data-i18n="teachers.title"></h1>
+      <p data-i18n="teachers.text"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="between mb-3">
+        <div class="searchbar" style="max-width:26rem">
+          <input class="input" id="q" type="search" data-i18n-ph="common.searchPlaceholder" aria-label="Search teachers">
+        </div>
+        <div class="row">
+          <span class="badge badge--ok"><span data-i18n="teachers.total"></span>: <b id="tTotal">0</b></span>
+          <span class="badge badge--live" data-i18n="common.live"></span>
+        </div>
+      </div>
+
+      <div class="grid g-4" id="grid"></div>
+
+      <div class="empty mt-3" id="empty" style="display:none">
+        <div class="empty__icon">👩‍🏫</div>
+        <h3 data-i18n="teachers.empty"></h3>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, esc = App.esc;
+  App.init({ active: 'teachers' });
+
+  var query = '';
+  var lang = function () { return I18N.lang(); };
+  var ur = function (base, alt) { return lang() === 'ur' && alt ? alt : base; };
+
+  function paint() {
+    var all = Store.all('teachers');
+    $('#tTotal').textContent = all.length;
+
+    var list = all.filter(function (t) {
+      if (!query) return true;
+      return [t.name, t.nameUr, t.role, t.roleUr, t.subject, t.qualification].join(' ').toLowerCase().indexOf(query.toLowerCase()) > -1;
+    });
+
+    $('#empty').style.display = list.length ? 'none' : '';
+
+    $('#grid').innerHTML = list.map(function (t) {
+      return '<article class="card reveal is-in">' +
+        '<div class="card__body person">' +
+          (t.photo
+            ? '<img class="avatar" src="' + esc(t.photo) + '" alt="' + esc(t.name) + '">'
+            : '<span class="avatar">' + esc(Store.initials(t.name)) + '</span>') +
+          '<h3>' + esc(ur(t.name, t.nameUr)) + '</h3>' +
+          '<p class="role">' + esc(ur(t.role, t.roleUr)) + '</p>' +
+          '<p class="meta"><b>' + esc(I18N.t('teachers.subject')) + ':</b> ' + esc(t.subject || '—') + '</p>' +
+          '<p class="meta">' + esc(ur(t.qualification, t.qualificationUr) || '—') + '</p>' +
+          (t.since ? '<span class="badge badge--gold mt-2">' + esc(I18N.t('teachers.since')) + ' ' + esc(t.since) + '</span>' : '') +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  $('#q').addEventListener('input', App.debounce(function (e) { query = e.target.value.trim(); paint(); }, 160));
+
+  paint();
+  Store.subscribe('teachers', paint);
+  document.addEventListener('gges:langchange', paint);
+})();
+</script>
+</body>
+</html>
