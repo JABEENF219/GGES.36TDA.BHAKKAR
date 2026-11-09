@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>News &amp; Notices — GGES 36 TDA BHAKKAR</title>
+<meta name="description" content="Official notices and announcements from GGES 36 TDA Bhakkar — admissions, examinations, events and health camps.">
+<meta name="theme-color" content="#0b6e4f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6e4f'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+<div id="ticker" class="ticker" aria-hidden="true"></div>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html" data-i18n="nav.home"></a><span>/</span><span data-i18n="nav.notices"></span>
+      </nav>
+      <h1 data-i18n="notices.title"></h1>
+      <p data-i18n="notices.text"></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell" style="max-width:74rem">
+      <div class="panel mb-3">
+        <div class="row">
+          <div class="searchbar">
+            <input class="input" id="q" type="search" data-i18n-ph="notices.searchPlaceholder" aria-label="Search">
+          </div>
+          <span class="badge badge--live" data-i18n="common.live"></span>
+          <span class="badge" id="countBadge">0</span>
+        </div>
+        <div class="filters mt-3" id="filters"></div>
+      </div>
+
+      <div class="stack" id="list"></div>
+
+      <div class="empty mt-3" id="empty" style="display:none">
+        <div class="empty__icon">📭</div>
+        <h3 data-i18n="notices.empty"></h3>
+        <p class="small mt-1" data-i18n="notices.emptyHint"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<!-- notice detail modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal__box">
+    <div class="modal__head">
+      <h3 id="mTitle"></h3>
+      <button class="icon-btn" id="mClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="row mb-3">
+        <span class="badge badge--info" id="mCat"></span>
+        <span class="badge" id="mDate"></span>
+        <span class="badge" id="mAuthor"></span>
+      </div>
+      <p id="mBody" style="white-space:pre-wrap;color:var(--ink-2)"></p>
+    </div>
+    <div class="modal__foot">
+      <button class="btn btn--ghost" id="mPrint" data-i18n="common.print"></button>
+      <button class="btn btn--primary" id="mClose2" data-i18n="common.close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = App.$, $$ = App.$$, esc = App.esc;
+  App.init({ active: 'notices' });
+
+  var query = '';
+  var cat = 'all';
+
+  function catOf(n) { return n.category || 'General'; }
+  function titleOf(n) { return I18N.lang() === 'ur' && n.titleUr ? n.titleUr : n.title; }
+  function bodyOf(n) { return I18N.lang() === 'ur' && n.bodyUr ? n.bodyUr : n.body; }
+
+  function filtered() {
+    var list = Store.all('notices');
+    if (cat !== 'all') list = list.filter(function (n) { return catOf(n) === cat; });
+    if (query) {
+      var q = query.toLowerCase();
+      list = list.filter(function (n) {
+        return (String(n.title) + ' ' + String(n.titleUr || '') + ' ' + String(n.body) + ' ' + String(n.bodyUr || '') + ' ' + catOf(n)).toLowerCase().indexOf(q) > -1;
+      });
+    }
+    return list.sort(function (a, b) {
+      if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;
+      return String(b.date || b.createdAt).localeCompare(String(a.date || a.createdAt));
+    });
+  }
+
+  function paintFilters() {
+    var cats = {};
+    Store.all('notices').forEach(function (n) { cats[catOf(n)] = true; });
+    var list = Object.keys(cats).sort();
+    var html = '<button class="chip" data-cat="all" aria-pressed="' + (cat === 'all') + '">' + esc(I18N.t('common.all')) + '</button>';
+    html += list.map(function (c) {
+      return '<button class="chip" data-cat="' + esc(c) + '" aria-pressed="' + (cat === c) + '">' + esc(c) + '</button>';
+    }).join('');
+    var host = $('#filters');
+    host.innerHTML = html;
+    $$('.chip', host).forEach(function (b) {
+      b.addEventListener('click', function () { cat = b.getAttribute('data-cat'); paintFilterPressed(); paintList(); });
+    });
+  }
+  function paintFilterPressed() {
+    $$('#filters .chip').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-cat') === cat));
+    });
+  }
+
+  function paintList() {
+    var list = filtered();
+    $('#countBadge').textContent = list.length + ' ' + I18N.t('common.results');
+    $('#empty').style.display = list.length ? 'none' : '';
+    var lang = I18N.lang();
+
+    $('#list').innerHTML = list.map(function (n) {
+      var d = new Date(n.date || n.createdAt);
+      var ok = !isNaN(d.getTime());
+      var day = ok ? String(d.getDate()).padStart(2, '0') : '--';
+      var mon = ok ? d.toLocaleDateString(lang === 'ur' ? 'ur-PK' : 'en-GB', { month: 'short' }) : '';
+      var isNew = (Date.now() - d.getTime()) < 7 * 86400000;
+      return '<article class="notice">' +
+        '<div class="notice__date"><b>' + day + '</b><span>' + esc(mon) + '</span></div>' +
+        '<div class="notice__body">' +
+          '<h3>' + esc(titleOf(n)) + '</h3>' +
+          '<p>' + esc(String(bodyOf(n) || '').slice(0, 220)) + (String(bodyOf(n) || '').length > 220 ? '…' : '') + '</p>' +
+          '<div class="notice__foot">' +
+            '<span class="badge badge--info">' + esc(catOf(n)) + '</span>' +
+            (n.pinned ? '<span class="badge badge--gold">' + esc(I18N.t('notices.pinned')) + '</span>' : '') +
+            (isNew ? '<span class="badge badge--live">' + esc(I18N.t('common.new')) + '</span>' : '') +
+            '<span class="tiny muted">' + esc(n.author || '') + '</span>' +
+            '<button class="btn btn--ghost btn--xs" data-open="' + esc(n.id) + '">' + esc(I18N.t('common.viewDetails')) + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+
+    $$('#list [data-open]').forEach(function (b) {
+      b.addEventListener('click', function () { open(b.getAttribute('data-open')); });
+    });
+  }
+
+  /* ---------- modal ---------- */
+  var modal = $('#modal');
+  function open(id) {
+    var n = Store.get('notices', id);
+    if (!n) return;
+    $('#mTitle').textContent = titleOf(n);
+    $('#mCat').textContent = catOf(n);
+    $('#mDate').textContent = Store.formatDate(n.date || n.createdAt, I18N.lang());
+    $('#mAuthor').textContent = n.author || '';
+    $('#mBody').textContent = bodyOf(n) || '';
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() { modal.classList.remove('is-open'); document.body.style.overflow = ''; }
+  $('#mClose').addEventListener('click', close);
+  $('#mClose2').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  $('#mPrint').addEventListener('click', function () { window.print(); });
+
+  $('#q').addEventListener('input', App.debounce(function (e) { query = e.target.value.trim(); paintList(); }, 180));
+
+  function paintAll() { paintFilters(); paintFilterPressed(); paintList(); }
+  paintAll();
+  Store.subscribe('notices', paintAll);
+  document.addEventListener('gges:langchange', paintAll);
+})();
+</script>
+</body>
+</html>
