@@ -317,7 +317,7 @@
   function paintGallery() {
     var lang = I18N.lang();
     var host = $('#homeGallery');
-    var list = Store.all('gallery').slice(0, 4);
+    var list = Store.all('gallery').filter(function (g) { return Store.mediaKind(g) !== 'video'; }).slice(0, 4);
     if (!list.length) {
       host.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty__icon">🖼️</div>' +
         '<h3>' + esc(I18N.t('gallery.empty')) + '</h3></div>';
@@ -382,7 +382,9 @@
   function paintHero() {
     var h = $('#heroPhoto');
     if (!h) return;
-    var uploaded = Store.all('gallery').filter(function (g) { return g.src && String(g.src).indexOf('assets/') !== 0; });
+    var uploaded = Store.all('gallery').filter(function (g) {
+      return Store.mediaKind(g) === 'photo' && g.src && String(g.src).indexOf('assets/') !== 0;
+    });
     if (uploaded.length) h.src = uploaded[0].src;
   }
 

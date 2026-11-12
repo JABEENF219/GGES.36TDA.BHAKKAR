@@ -150,7 +150,7 @@
           <div style="font-size:1.9rem">🖼️</div>
           <b data-i18n="admin.dropTitle"></b>
           <span data-i18n="admin.dropHint"></span>
-          <input type="file" id="fileInput" accept="image/*" multiple class="hide">
+          <input type="file" id="fileInput" accept="image/*,video/*" multiple class="hide">
         </div>
         <div class="form-grid mt-3">
           <div class="field">
@@ -160,6 +160,14 @@
           <div class="field">
             <label for="upTitle" data-i18n="admin.photoTitle"></label>
             <input class="input" id="upTitle" placeholder="e.g. Annual Prize Distribution">
+          </div>
+          <div class="field field--full">
+            <label for="upYt" data-i18n="admin.videoLink"></label>
+            <div class="row" style="gap:.5rem">
+              <input class="input" id="upYt" type="url" placeholder="https://www.youtube.com/watch?v=...">
+              <button class="btn btn--primary" type="button" id="addYt" data-i18n="admin.addVideo"></button>
+            </div>
+            <p class="tiny muted" data-i18n="admin.videoLinkHint"></p>
           </div>
         </div>
       </div>
@@ -296,7 +304,7 @@
 
   /* ------------------------------------------------------- schemas */
   var CLASS_OPTS = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8'];
-  var CAT_OPTS = ['Campus', 'Academics', 'Facilities', 'Events', 'Sports', 'Other'];
+  var CAT_OPTS = ['Campus', 'Academics', 'Rooms', 'Facilities', 'Events', 'Sports', 'Other'];
   var NOTICE_CATS = ['General', 'Admissions', 'Examination', 'Events', 'Health', 'Holiday'];
 
   var SCHEMAS = {
@@ -753,6 +761,15 @@
 
   /* ------------------------------------------------------- gallery */
   var upCat = $('#upCat');
+
+  function thumbVisual(g) {
+    var kind = Store.mediaKind(g);
+    if (kind === 'video') {
+      return '<div class="thumb__video"><span>▶</span></div>';
+    }
+    return '<img src="' + esc(Store.mediaPoster(g)) + '" alt="' + esc(g.title) + '" loading="lazy">';
+  }
+
   function paintGallery() {
     upCat.innerHTML = CAT_OPTS.map(function (c) {
       return '<option value="' + c + '">' + esc(I18N.t('gallery.cat.' + c, c)) + '</option>';
@@ -762,11 +779,12 @@
     $('#empty-gallery').classList.toggle('hide', items.length > 0);
     $('#thumbGrid').innerHTML = items.map(function (g) {
       return '<figure class="thumb">' +
-        '<img src="' + esc(g.src) + '" alt="' + esc(g.title) + '" loading="lazy">' +
+        thumbVisual(g) +
         '<figcaption class="thumb__body">' +
           '<p>' + esc(g.title || '—') + '</p>' +
           '<div class="row" style="gap:.3rem">' +
             '<span class="badge">' + esc(I18N.t('gallery.cat.' + (g.category || 'Other'), g.category || 'Other')) + '</span>' +
+            (Store.mediaKind(g) === 'photo' ? '' : '<span class="badge badge--gold">' + esc(I18N.t('gallery.video')) + '</span>') +
             '<button class="btn btn--ghost btn--xs" data-gedit="' + esc(g.id) + '">' + esc(I18N.t('common.edit')) + '</button>' +
             '<button class="btn btn--danger btn--xs" data-gdel="' + esc(g.id) + '">' + esc(I18N.t('common.delete')) + '</button>' +
           '</div>' +
@@ -807,29 +825,51 @@
   fileInput.addEventListener('change', function () { handleFiles(fileInput.files); fileInput.value = ''; });
 
   function handleFiles(files) {
-    var arr = Array.prototype.slice.call(files).filter(function (f) { return /^image\//.test(f.type); });
-    if (!arr.length) return;
+    var arr = Array.prototype.slice.call(files).filter(function (f) {
+      return /^image\//.test(f.type) || /^video\//.test(f.type);
+    });
+    if (!arr.length) { App.toast(I18N.t('admin.mediaUnsupported'), 'error'); return; }
     var cat = upCat.value || 'Other';
     var baseTitle = $('#upTitle').value.trim();
     var done = 0, failed = 0;
     arr.forEach(function (f, i) {
-      Store.readFileAsDataURL(f, 15000).then(function (dataUrl) {
-        var title = baseTitle ? (arr.length > 1 ? baseTitle + ' ' + (i + 1) : baseTitle) : f.name.replace(/\.[^.]+$/, '');
-        Store.add('gallery', { title: title, titleUr: '', category: cat, src: dataUrl, date: Store.todayISO() });
-        done++;
-        if (done + failed === arr.length) finish();
-      }).catch(function () {
-        failed++;
-        if (done + failed === arr.length) finish();
-      });
+      var isVideo = /^video\//.test(f.type);
+      var title = baseTitle ? (arr.length > 1 ? baseTitle + ' ' + (i + 1) : baseTitle) : f.name.replace(/\.[^.]+$/, '');
+      var upload = isVideo ? Store.uploadVideo(f) : Store.readFileAsDataURL(f, 15000);
+      upload.then(function (url) {
+        return Store.add('gallery', {
+          title: title, titleUr: '', category: cat, src: url,
+          type: isVideo ? 'video' : 'photo', mime: f.type, date: Store.todayISO()
+        });
+      }).then(function () { done++; settle(); }, function () { failed++; settle(); });
     });
-    function finish() {
+    function settle() {
+      if (done + failed !== arr.length) return;
       if (done) App.toast(done + ' ' + I18N.t('admin.uploaded'), 'success');
-      if (failed) App.toast(failed + ' image(s) skipped — they could not be uploaded.', 'error');
+      if (failed) App.toast(I18N.t('admin.uploadFailed'), 'error');
       $('#upTitle').value = '';
       refreshAll();
     }
   }
+
+  /* add a YouTube video (room tour etc.) without uploading anything */
+  $('#addYt').addEventListener('click', function () {
+    var url = $('#upYt').value.trim();
+    var id = Store.youTubeId(url);
+    if (!id) { App.toast(I18N.t('admin.videoLinkInvalid'), 'error'); return; }
+    Store.add('gallery', {
+      title: $('#upTitle').value.trim() || I18N.t('admin.untitledVideo'),
+      titleUr: '', category: upCat.value || 'Other',
+      type: 'video', youtube: url,
+      src: 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg',
+      date: Store.todayISO()
+    }).then(function () {
+      $('#upYt').value = '';
+      $('#upTitle').value = '';
+      App.toast(I18N.t('common.saved'), 'success');
+      refreshAll();
+    }).catch(function () { App.toast(I18N.t('admin.uploadFailed'), 'error'); });
+  });
 
   /* ------------------------------------------------------- settings */
   var SETTINGS_FIELDS = [

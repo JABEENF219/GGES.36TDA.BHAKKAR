@@ -318,6 +318,52 @@
     });
   }
 
+  function uploadVideo(file, maxMB) {
+    var limitMB = maxMB || 48;
+    return new Promise(function (resolve, reject) {
+      if (!file) return reject(new Error('NO_FILE'));
+      if (file.size > limitMB * 1024 * 1024) return reject(new Error('FILE_TOO_LARGE'));
+      var m = String(file.name || '').match(/\.([A-Za-z0-9]{2,4})$/);
+      var ext = m ? m[1].toLowerCase() : 'mp4';
+      var path = 'uploads/' + todayISO() + '-' + uid('vid') + '.' + ext;
+      sb.storage.from(BUCKET).upload(path, file, {
+        contentType: file.type || 'video/mp4',
+        upsert: false
+      }).then(function (res) {
+        if (res.error) throw res.error;
+        var pub = sb.storage.from(BUCKET).getPublicUrl(path);
+        resolve(pub.data.publicUrl);
+      }).catch(reject);
+    });
+  }
+
+  /* --------------------------------------------------------------- media kind */
+  function youTubeId(url) {
+    if (!url) return '';
+    var s = String(url).trim();
+    var m = s.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{6,})/);
+    if (m) return m[1];
+    if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
+    return '';
+  }
+
+  function mediaKind(item) {
+    var g = item || {};
+    if (youTubeId(g.youtube) || youTubeId(g.src)) return 'youtube';
+    if (g.type === 'video' || /^video\//.test(g.mime || '')) return 'video';
+    if (/\.(mp4|webm|ogv|ogg|mov|m4v|avi|3gp)([?#]|$)/i.test(g.src || '')) return 'video';
+    return 'photo';
+  }
+
+  function mediaPoster(item) {
+    var g = item || {};
+    if (mediaKind(g) === 'youtube') {
+      var id = youTubeId(g.youtube) || youTubeId(g.src);
+      if (id) return 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg';
+    }
+    return g.src || '';
+  }
+
   /* ------------------------------------------------------------------- write */
   function rollback(collection) { emit(collection); }
 
@@ -653,6 +699,12 @@
     /* compresses the picture, uploads it to the cloud and resolves its public URL */
     uploadImage: uploadImage,
     readFileAsDataURL: uploadImage,
+    /* uploads a video file unchanged and resolves its public URL */
+    uploadVideo: uploadVideo,
+
+    youTubeId: youTubeId,
+    mediaKind: mediaKind,
+    mediaPoster: mediaPoster,
 
     download: function (filename, text) {
       var blob = new Blob([text], { type: 'application/json' });
