@@ -12,6 +12,7 @@
     { key: 'nav.home', href: 'index.html', id: 'home' },
     { key: 'nav.about', href: 'about.html', id: 'about' },
     { key: 'nav.gallery', href: 'gallery.html', id: 'gallery' },
+    { key: 'nav.view360', href: 'view360.html', id: 'view360' },
     { key: 'nav.notices', href: 'notices.html', id: 'notices' },
     { key: 'nav.admissions', href: 'admissions.html', id: 'admissions' },
     { key: 'nav.students', href: 'students.html', id: 'students' },

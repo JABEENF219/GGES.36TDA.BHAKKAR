@@ -91,10 +91,15 @@
   var timer = null;
 
   function catLabel(c) { return I18N.t('gallery.cat.' + c, c); }
+  /* 360° panoramas are shown on the 360° page, never in the normal grid */
+  function isPano(g) { return (g.category || 'Other') === 'Panorama'; }
 
   function paintFilters() {
     var used = {};
-    Store.all('gallery').forEach(function (g) { used[g.category || 'Other'] = true; });
+    Store.all('gallery').forEach(function (g) {
+      if (isPano(g)) return;   /* panoramas live on the 360° page */
+      used[g.category || 'Other'] = true;
+    });
     var list = CATS.filter(function (c) { return used[c]; });
     var all = ['<button class="chip" data-cat="all" aria-pressed="' + (activeCat === 'all') + '">' + esc(I18N.t('common.all')) + '</button>'];
     host.innerHTML = all.concat(list.map(function (c) {
@@ -108,7 +113,7 @@
 
   function items() {
     var lang = I18N.lang();
-    var list = Store.all('gallery');
+    var list = Store.all('gallery').filter(function (g) { return !isPano(g); });
     if (activeCat !== 'all') list = list.filter(function (g) { return (g.category || 'Other') === activeCat; });
     return list.map(function (g) {
       var kind = Store.mediaKind(g);

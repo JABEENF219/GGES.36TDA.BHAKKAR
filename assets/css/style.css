@@ -734,6 +734,85 @@ table.data tbody tr:hover { background: var(--green-50); }
 .thumb__body p { font-size: .82rem; font-weight: 600; margin-bottom: .45rem; word-break: break-word; }
 .thumb__acts { display: flex; gap: .35rem; }
 
+/* ========================= 360° panorama viewer ========================= */
+.pano-stage {
+  position: relative; width: 100%;
+  height: clamp(300px, 62vh, 640px);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden; background: var(--surface-2); isolation: isolate;
+}
+.pano { position: absolute; inset: 0; z-index: 2; outline: 0; touch-action: none; }
+/* keep the still picture visible behind the engine while it warms up,
+   and use our own loading indicator instead of the library's default boxes */
+.pano-stage .pnlm-container { background: transparent !important; }
+.pano-stage .pnlm-load-box,
+.pano-stage .pnlm-error-msg { display: none !important; }
+.pano__fallback {
+  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
+  object-fit: cover; display: block; opacity: 1;
+  transition: opacity .5s ease;
+}
+.pano-stage.is-ready .pano__fallback { opacity: 0; pointer-events: none; }
+
+.pano__loader {
+  position: absolute; inset: 0; z-index: 3; display: grid; place-items: center;
+  align-content: center; justify-items: center; gap: .65rem; padding: 1rem;
+  background: rgba(4, 26, 19, .42); color: #eaf6f1;
+  font-size: .85rem; font-weight: 600; text-align: center;
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+}
+.spinner {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .28); border-top-color: #fff;
+  animation: gges-spin .8s linear infinite;
+}
+@keyframes gges-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+
+.pano__note {
+  position: absolute; inset-inline: 0; bottom: 0; z-index: 4; margin: 0;
+  padding: .5rem .8rem; font-size: .78rem; text-align: center;
+  background: rgba(4, 26, 19, .84); color: #dff1ea;
+}
+
+.pano-bar { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; margin-top: .7rem; }
+.pano-bar__group {
+  display: flex; gap: .3rem; padding: .3rem;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-full); box-shadow: var(--shadow-xs);
+}
+.pano-btn {
+  width: 40px; height: 40px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.15rem; line-height: 1;
+  color: var(--ink-2); background: transparent;
+  transition: background .15s ease, color .15s ease;
+}
+.pano-btn:hover { background: var(--green-100); color: var(--green-700); }
+.pano-btn[aria-pressed="true"] { background: var(--green-600); color: #fff; }
+.pano-bar__hint { margin: 0; font-size: .8rem; color: var(--muted); }
+
+.pano-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .7rem; margin-top: .7rem; }
+.pano-thumb {
+  display: block; padding: 0; margin: 0; cursor: pointer; text-align: start;
+  border: 2px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); overflow: hidden;
+  transition: border-color .15s ease;
+}
+.pano-thumb img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; display: block; }
+.pano-thumb span { display: block; padding: .45rem .55rem; font-size: .78rem; font-weight: 600; color: var(--ink-2); }
+.pano-thumb:hover { border-color: var(--green-400); }
+.pano-thumb.is-active { border-color: var(--green-600); }
+.pano-thumb.is-active span { color: var(--green-700); }
+
+.howto { margin: 0; padding-inline-start: 1.2rem; font-size: .9rem; color: var(--ink-2); }
+.howto li { margin-bottom: .35rem; }
+.howto li:last-child { margin-bottom: 0; }
+
+@media (max-width: 520px) {
+  .pano-stage { height: clamp(250px, 46vh, 400px); }
+  .pano-bar__hint { font-size: .74rem; }
+}
+
 /* utility */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .divider { height: 1px; background: var(--line); margin: 1.4rem 0; border: 0; }

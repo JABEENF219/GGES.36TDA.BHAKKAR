@@ -337,6 +337,29 @@
     });
   }
 
+  /* A 360° panorama needs far more detail than a normal photo, so it is only
+     scaled down to 4096 px and keeps a higher quality than gallery pictures. */
+  function uploadPanorama(file) {
+    var limitKB = 30000;
+    return new Promise(function (resolve, reject) {
+      if (!file) return reject(new Error('NO_FILE'));
+      if (!/^image\//.test(file.type)) return reject(new Error('NOT_AN_IMAGE'));
+      if (file.size > limitKB * 1024) return reject(new Error('FILE_TOO_LARGE'));
+      compressImage(file, 4096).then(function (blob) {
+        var ext = /png/i.test(blob.type) ? 'png' : 'jpg';
+        var path = 'uploads/' + todayISO() + '-' + uid('pano') + '.' + ext;
+        return sb.storage.from(BUCKET).upload(path, blob, {
+          contentType: blob.type || 'image/jpeg',
+          upsert: false
+        }).then(function (res) {
+          if (res.error) throw res.error;
+          var pub = sb.storage.from(BUCKET).getPublicUrl(path);
+          resolve(pub.data.publicUrl);
+        });
+      }).catch(reject);
+    });
+  }
+
   /* --------------------------------------------------------------- media kind */
   function youTubeId(url) {
     if (!url) return '';
@@ -701,6 +724,8 @@
     readFileAsDataURL: uploadImage,
     /* uploads a video file unchanged and resolves its public URL */
     uploadVideo: uploadVideo,
+    /* uploads a high-resolution 360° panorama and resolves its public URL */
+    uploadPanorama: uploadPanorama,
 
     youTubeId: youTubeId,
     mediaKind: mediaKind,

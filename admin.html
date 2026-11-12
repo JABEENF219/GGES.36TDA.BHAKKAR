@@ -169,6 +169,9 @@
             </div>
             <p class="tiny muted" data-i18n="admin.videoLinkHint"></p>
           </div>
+          <div class="field field--full">
+            <p class="tiny muted" data-i18n="admin.panoHint"></p>
+          </div>
         </div>
       </div>
       <div class="thumb-grid" id="thumbGrid"></div>
@@ -304,7 +307,7 @@
 
   /* ------------------------------------------------------- schemas */
   var CLASS_OPTS = ['Nursery', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8'];
-  var CAT_OPTS = ['Campus', 'Academics', 'Rooms', 'Facilities', 'Events', 'Sports', 'Other'];
+  var CAT_OPTS = ['Campus', 'Academics', 'Rooms', 'Facilities', 'Events', 'Sports', 'Panorama', 'Other'];
   var NOTICE_CATS = ['General', 'Admissions', 'Examination', 'Events', 'Health', 'Holiday'];
 
   var SCHEMAS = {
@@ -830,12 +833,14 @@
     });
     if (!arr.length) { App.toast(I18N.t('admin.mediaUnsupported'), 'error'); return; }
     var cat = upCat.value || 'Other';
+    var isPano = cat === 'Panorama';
     var baseTitle = $('#upTitle').value.trim();
     var done = 0, failed = 0;
     arr.forEach(function (f, i) {
       var isVideo = /^video\//.test(f.type);
       var title = baseTitle ? (arr.length > 1 ? baseTitle + ' ' + (i + 1) : baseTitle) : f.name.replace(/\.[^.]+$/, '');
-      var upload = isVideo ? Store.uploadVideo(f) : Store.readFileAsDataURL(f, 15000);
+      /* panoramas keep a much higher resolution than ordinary gallery photos */
+      var upload = isVideo ? Store.uploadVideo(f) : (isPano ? Store.uploadPanorama(f) : Store.readFileAsDataURL(f, 15000));
       upload.then(function (url) {
         return Store.add('gallery', {
           title: title, titleUr: '', category: cat, src: url,
